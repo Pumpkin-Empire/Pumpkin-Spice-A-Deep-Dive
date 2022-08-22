@@ -1,6 +1,6 @@
 # Pumpkin-Spice-A-Deep-Dive
 
-##Current Plan
+## Current Plan
 
 1. Research twitter apis to find out what data is available.
   - Location?
