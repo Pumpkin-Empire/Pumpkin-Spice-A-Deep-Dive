@@ -9,8 +9,8 @@
     - Demographic
     - Reactions 
     - Retweets
-2. Save data to SQL database or nosql?
-3. Set up api pulls to pull data (is it REST? Can do postman or something else)
+2. Save data to SQL database (postgresql)
+3. Set up api get requests to pull data
 4. Investigate initial data.
     - Make initial data plan (basic analysis)
     - Plan & timeline for additional data analysis/buildout  based on available data & time available
