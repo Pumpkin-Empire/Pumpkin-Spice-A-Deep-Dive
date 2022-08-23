@@ -1,18 +1,8 @@
 import json
-
 import requests
-
 import config
 import pandas as pd
-from rauth import OAuth1Service
 from datetime import datetime
-
-twitter = OAuth1Service(
-    name='twitter',
-    consumer_key=config.consumer_key,
-    consumer_secret=config.consumer_secret,
-
-)
 
 
 def get_date_string() -> str:
