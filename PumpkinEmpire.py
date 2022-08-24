@@ -56,8 +56,10 @@ def append_dict_values(base_dict: dict, append_dict: dict) -> dict:
     for key in base_dict_keys:
         if key == 'meta':
             base_dict[key] = append_dict[key]
+        elif key == 'includes':
+            base_dict[key]['users'].extend(append_dict[key]['users'])
         else:
-            base_dict[key].append(append_dict[key])
+            base_dict[key].extend(append_dict[key])
     return base_dict
 
 
@@ -99,3 +101,4 @@ def loop_connect() -> dict:
 # print(append_dict_values(dict1, dict2))
 
 # print(loop_connect())
+print(json.dumps(loop_connect(), indent=4, sort_keys=True))
