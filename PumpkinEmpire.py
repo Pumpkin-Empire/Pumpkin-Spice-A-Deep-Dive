@@ -31,7 +31,7 @@ def create_url(max_results=100) -> tuple:
                     'expansions': 'attachments.media_keys,author_id',
                     'place.fields': 'geo',
                     'user.fields': 'created_at,location,public_metrics',
-                    'next_token': {}}
+                    'next_token': ''}
     return search_url, query_params
 
 
@@ -44,6 +44,13 @@ def connect_to_api(url, headers, params, next_token = None):
     return response.json()
 
 
+def loop_connect():
+    max_requests_per_call = 100
+    max_requests_per_window = 180
+
+
+    pass
+# 180 tweets per 15 minutes.
 bearer_token = config.bearer_token
 headers = create_headers(bearer_token)
 url = create_url()
