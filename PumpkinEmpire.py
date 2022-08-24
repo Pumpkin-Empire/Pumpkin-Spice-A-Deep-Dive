@@ -22,7 +22,7 @@ def create_headers(bearer_token) -> str:
     return headers
 
 
-def create_url(max_results=100) -> tuple:
+def create_url(max_results=10) -> tuple:
     search_url = "https://api.twitter.com/2/tweets/search/recent?"
     query_params = {'query': "pumpkin spice",
                     'start_time': get_date_string(),
@@ -43,16 +43,48 @@ def connect_to_api(url, headers, params, next_token = None):
         raise Exception(response.status_code, response.text)
     return response.json()
 
-
-def loop_connect():
-    max_requests_per_call = 100
-    max_requests_per_window = 180
-
-
-    pass
-# 180 tweets per 15 minutes.
 bearer_token = config.bearer_token
 headers = create_headers(bearer_token)
 url = create_url()
-json_response = connect_to_api(url[0], headers, url[1])
-print(json.dumps(json_response, indent=4, sort_keys=True))
+
+
+def append_dict_values(base_dict: dict, append_dict: dict) -> dict:
+    """For appending multiple response objects in to one.
+    Input dict values are lists, this appends the lists together without replacing
+    original values."""
+    base_dict_keys = list(base_dict.keys())
+    for key in base_dict_keys:
+        base_dict[key].append(append_dict[key])
+    return base_dict
+
+
+def loop_connect():
+    # May be able to make these global, depending on the automation used later.
+    requests_per_call = 100
+    max_requests_per_window = 180
+    # Store list of response keys for appending dict values later.
+    response_keys = []
+    # Get Initial Response
+    json_response = connect_to_api(url[0], headers, url[1])
+    response_keys = list(json_response.keys())
+    requests_per_call = max_requests_per_window - requests_per_call
+    # print(json_response['meta']['next_token'])
+    # Update Url
+    # updated_requests_per_call =
+    # Get Next Response
+    temp_response = connect_to_api(url[0], headers, url[1], json_response['meta']['next_token'])
+    # print(temp_response)
+
+
+# loop_connect()
+# 180 tweets per 15 minutes.
+# bearer_token = config.bearer_token
+# headers = create_headers(bearer_token)
+# url = create_url()
+# json_response = connect_to_api(url[0], headers, url[1])
+# print(type(json_response))
+# print(json.dumps(json_response, indent=4, sort_keys=True))
+
+dict1 = {'data': [{'user': 'roy', 'tweet': 'hey there friendo'}, {'user': 'kendra', 'tweet': 'nick get back to work'}], 'info': [1, 2]}
+dict2 = {'data': [{'user': 'bevin', 'tweet': 'not your friendo buddyo'}, {'user': 'kris', 'tweet': 'kendra is MVP'}], 'info': [1, 2]}
+print(append_dict_values(dict1, dict2))
