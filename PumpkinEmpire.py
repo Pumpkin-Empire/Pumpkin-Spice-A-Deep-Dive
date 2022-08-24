@@ -51,29 +51,38 @@ url = create_url()
 def append_dict_values(base_dict: dict, append_dict: dict) -> dict:
     """For appending multiple response objects in to one.
     Input dict values are lists, this appends the lists together without replacing
-    original values."""
+    original values. 'meta' key does not get appended."""
     base_dict_keys = list(base_dict.keys())
     for key in base_dict_keys:
-        base_dict[key].append(append_dict[key])
+        if key == 'meta':
+            base_dict[key] = append_dict[key]
+        else:
+            base_dict[key].append(append_dict[key])
     return base_dict
 
 
-def loop_connect():
+def loop_connect() -> dict:
+
     # May be able to make these global, depending on the automation used later.
-    requests_per_call = 100
-    max_requests_per_window = 180
-    # Store list of response keys for appending dict values later.
-    response_keys = []
+    max_requests_per_call = 10
+    max_requests_per_window = 20
+    url = create_url(max_requests_per_call)
+
     # Get Initial Response
     json_response = connect_to_api(url[0], headers, url[1])
+
+    # Store list of response keys for appending dict values later.
     response_keys = list(json_response.keys())
-    requests_per_call = max_requests_per_window - requests_per_call
-    # print(json_response['meta']['next_token'])
-    # Update Url
-    # updated_requests_per_call =
-    # Get Next Response
-    temp_response = connect_to_api(url[0], headers, url[1], json_response['meta']['next_token'])
-    # print(temp_response)
+
+    # Update how many items we can request
+    requests_per_call = max_requests_per_window - max_requests_per_call
+    while requests_per_call > 0:
+        url = create_url(requests_per_call)
+        temp_response = connect_to_api(url[0], headers, url[1], json_response['meta']['next_token'])
+        json_response = append_dict_values(json_response, temp_response)
+        requests_per_call = requests_per_call - max_requests_per_call
+    return json_response
+
 
 
 # loop_connect()
@@ -85,6 +94,8 @@ def loop_connect():
 # print(type(json_response))
 # print(json.dumps(json_response, indent=4, sort_keys=True))
 
-dict1 = {'data': [{'user': 'roy', 'tweet': 'hey there friendo'}, {'user': 'kendra', 'tweet': 'nick get back to work'}], 'info': [1, 2]}
-dict2 = {'data': [{'user': 'bevin', 'tweet': 'not your friendo buddyo'}, {'user': 'kris', 'tweet': 'kendra is MVP'}], 'info': [1, 2]}
-print(append_dict_values(dict1, dict2))
+# dict1 = {'data': [{'user': 'roy', 'tweet': 'hey there friendo'}, {'user': 'kendra', 'tweet': 'nick get back to work'}], 'meta': [1, 2]}
+# dict2 = {'data': [{'user': 'bevin', 'tweet': 'not your friendo buddyo'}, {'user': 'kris', 'tweet': 'kendra is MVP'}], 'meta': [3, 4]}
+# print(append_dict_values(dict1, dict2))
+
+# print(loop_connect())
