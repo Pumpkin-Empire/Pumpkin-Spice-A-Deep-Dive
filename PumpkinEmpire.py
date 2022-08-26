@@ -3,6 +3,18 @@ import requests
 import config
 import pandas as pd
 from datetime import datetime
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from models import *
+
+hostname = config.hostname
+dbname = config.dbname
+uname = config.uname
+pwd = config.pwd
+
+# engine = create_engine('postgresql://scott:tiger@localhost:5432/mydatabase')
+engine = create_engine("postgresql://{user}:{pw}@{host}/{db}".format(host=hostname, db=dbname, user=uname,pw=pwd))
+
 
 
 
@@ -18,7 +30,7 @@ def auth():
     return config.bearer_token
 
 
-def create_headers(bearer_token) -> str:
+def create_headers(bearer_token) -> dict:
     headers = {"Authorization": "Bearer {}".format(bearer_token)}
     return headers
 
@@ -88,6 +100,37 @@ def loop_connect() -> dict:
 
 
 
+
+def add_tweets_to_db(response: dict):
+    for twit in response['data']:
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        tweet = session.query(Tweet).filter_by(tweet_id=twit['id']).first()
+        if not tweet:
+            tweet_id = twit['id']
+            author_id = twit['author_id']
+            tweet_text = twit['text']
+            like_count = twit['public_metrics']['like_count']
+            quote_count = twit['public_metrics']['quote_count']
+            reply_count = twit['public_metrics']['reply_count']
+            retweet_count = twit['public_metrics']['retweet_count']
+            place = ''
+            try:
+                if type(twit['entities']) == dict:
+                    try:
+                        if type(twit['entities']['annotations']) == dict:
+                            place = twit.get('entities', {}).get('annotations', {}).get('normalized_text')
+                    except KeyError:
+                        place = ''
+            except KeyError:
+                place = None
+            date = datetime.today().strftime('%Y-%m-%d')
+            tweet = Tweet(tweet_id, author_id, tweet_text, like_count, quote_count,
+                          reply_count, retweet_count, place, date)
+
+            session.add(tweet)
+            session.commit()
+
 # loop_connect()
 # 180 tweets per 15 minutes.
 # bearer_token = config.bearer_token
@@ -102,4 +145,9 @@ def loop_connect() -> dict:
 # print(append_dict_values(dict1, dict2))
 
 # print(loop_connect())
-print(json.dumps(loop_connect(), indent=4, sort_keys=True))
+# print(json.dumps(loop_connect(), indent=4, sort_keys=True))
+
+if __name__ == "__main__":
+
+    response = loop_connect()
+    add_tweets_to_db(response)
