@@ -119,6 +119,26 @@ def add_tweets_to_db(response: dict):
             session.add(tweet)
             session.commit()
 
+def add_users_to_db(response: dict):
+    for acct in response['includes']: ##maybe could make this ['includes']['users'] then update vars below?
+        Session = sessionmaker(bind=engine)
+        session = Session
+        user = session.query(User).filter_by(user_id=acct['user']).first()
+        if not user:
+            user_id = acct['users']['id']
+            username = acct['users']['username']
+            location = acct['users']['location']
+            follower_count = acct['users']['public_metrics']['followers_count']
+            following_count = acct['users']['public_metrics']['following_count']
+            tweet_count = acct['users']['public_metrics']['tweet_count']
+            acct_date = acct['users']['created_at']
+            user = User(user_id, username, location, follower_count, following_count, tweet_count, acct_date)
+
+            session.add(user)
+            session.commit()
+
+
+
 # loop_connect()
 # 180 tweets per 15 minutes.
 # bearer_token = config.bearer_token
