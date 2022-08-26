@@ -97,7 +97,7 @@ def loop_connect() -> dict:
 # print(json.dumps(json_response, indent=4, sort_keys=True))
 
 # dict1 = {'data': [{'user': 'roy', 'tweet': 'hey there friendo'}, {'user': 'kendra', 'tweet': 'nick get back to work'}], 'meta': [1, 2]}
-# dict2 = {'data': [{'user': 'bevin', 'tweet': 'not your friendo buddyo'}, {'user': 'kris', 'tweet': 'kendra is MVP'}], 'meta': [3, 4]}
+# dict2 = {'data': [{'user': 'bevin', 'tweet': 'not your friendo buddyo'}, {'user': 'kris', 'tweet': 'nick is MVP'}], 'meta': [3, 4]}
 # print(append_dict_values(dict1, dict2))
 
 # print(loop_connect())
