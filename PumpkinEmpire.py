@@ -6,13 +6,14 @@ from datetime import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import *
+import psycopg2
 
 hostname = config.hostname
 dbname = config.dbname
 uname = config.uname
 pwd = config.pwd
 
-engine = create_engine("postgresql://{user}:{pw}@{host}/{db}".format(host=hostname, db=dbname, user=uname, pw=pwd))
+engine = create_engine("postgresql://{user}:{pw}@{host}/{db}".format(host=hostname, db=dbname, user=uname, pw=pwd), pool_size=20, max_overflow=0)
 
 
 def get_date_string() -> str:
@@ -109,7 +110,7 @@ def add_tweets_to_db(response: dict):
                         if type(twit['entities']['annotations']) == dict:
                             place = twit.get('entities', {}).get('annotations', {}).get('normalized_text')
                     except KeyError:
-                        place = ''
+                        place = None
             except KeyError:
                 place = None
             date = datetime.today().strftime('%Y-%m-%d')
@@ -120,18 +121,22 @@ def add_tweets_to_db(response: dict):
             session.commit()
 
 def add_users_to_db(response: dict):
-    for acct in response['includes']: ##maybe could make this ['includes']['users'] then update vars below?
+    for acct in response['includes']['users']: ##maybe could make this ['includes']['users'] then update vars below?
         Session = sessionmaker(bind=engine)
-        session = Session
-        user = session.query(User).filter_by(user_id=acct['user']).first()
+        session = Session()
+        user = session.query(User).filter_by(user_id=acct['id']).first()
         if not user:
-            user_id = acct['users']['id']
-            username = acct['users']['username']
-            location = acct['users']['location']
-            follower_count = acct['users']['public_metrics']['followers_count']
-            following_count = acct['users']['public_metrics']['following_count']
-            tweet_count = acct['users']['public_metrics']['tweet_count']
-            acct_date = acct['users']['created_at']
+            user_id = acct['id']
+            username = acct['username']
+            try:
+                location = acct['location']
+            except KeyError:
+                location = None
+
+            follower_count = acct['public_metrics']['followers_count']
+            following_count = acct['public_metrics']['following_count']
+            tweet_count = acct['public_metrics']['tweet_count']
+            acct_date = acct['created_at']
             user = User(user_id, username, location, follower_count, following_count, tweet_count, acct_date)
 
             session.add(user)
@@ -163,3 +168,4 @@ if __name__ == "__main__":
     url = create_url()
     response = loop_connect()
     add_tweets_to_db(response)
+    add_users_to_db(response)
