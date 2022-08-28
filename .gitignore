@@ -9,3 +9,5 @@ node_modules
 .sass-cache
 # Ignore API config file
 config.py
+
+__pycache__/
