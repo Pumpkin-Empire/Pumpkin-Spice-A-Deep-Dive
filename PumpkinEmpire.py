@@ -2,7 +2,7 @@
 import requests
 import config
 # import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta, date
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import *
@@ -19,9 +19,14 @@ engine = create_engine("postgresql://{user}:{pw}@{host}/{db}".format(host=hostna
 def get_date_string() -> str:
     """Returns today's date and time at 12:01AM, formatted for Twitter API v2
     query:   '2022-08-23T00:01:00Z' """
-    today = datetime.today().strftime('%Y-%m-%d')
-    time_and_formatting = 'T00:01:00Z'
-    return today + time_and_formatting
+    yesterday = date.today() - timedelta(days = 1)
+    # today = datetime.today().strftime('%Y-%m-%d')
+    now = datetime.now()
+    time_and_formatting  = 'T' + now.strftime("%H:%M:%S") + 'Z'
+    return str(yesterday) + time_and_formatting
+
+
+
 
 
 def auth():
@@ -119,6 +124,8 @@ def add_tweets_to_db(response: dict):
 
             session.add(tweet)
             session.commit()
+            print("Successfully wrote to database.")
+
 
 def add_users_to_db(response: dict):
     for acct in response['includes']['users']: ##maybe could make this ['includes']['users'] then update vars below?
@@ -132,7 +139,6 @@ def add_users_to_db(response: dict):
                 location = acct['location']
             except KeyError:
                 location = None
-
             follower_count = acct['public_metrics']['followers_count']
             following_count = acct['public_metrics']['following_count']
             tweet_count = acct['public_metrics']['tweet_count']
@@ -141,6 +147,7 @@ def add_users_to_db(response: dict):
 
             session.add(user)
             session.commit()
+            print("Successfully wrote to database")
 
 
 
