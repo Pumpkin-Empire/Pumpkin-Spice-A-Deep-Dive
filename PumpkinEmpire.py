@@ -17,7 +17,8 @@ engine = create_engine("postgresql://{user}:{pw}@{host}/{db}".format(host=hostna
 
 
 def get_date_string() -> str:
-    """Returns today's date and time at 12:01AM, formatted for Twitter API v2
+    """Returns today's date and time from 24hrs ago, to use
+    when searching for tweets from previous day. Formatted for Twitter API v2
     query:   '2022-08-23T00:01:00Z' """
     yesterday = date.today() - timedelta(days = 1)
     # today = datetime.today().strftime('%Y-%m-%d')
