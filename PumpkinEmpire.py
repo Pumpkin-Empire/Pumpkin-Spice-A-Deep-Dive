@@ -125,7 +125,7 @@ def add_tweets_to_db(response: dict):
 
             session.add(tweet)
             session.commit()
-            print("Successfully wrote to database.")
+    print("Successfully wrote to database.")
 
 
 def add_users_to_db(response: dict):
@@ -148,7 +148,7 @@ def add_users_to_db(response: dict):
 
             session.add(user)
             session.commit()
-            print("Successfully wrote to database")
+    print("Successfully wrote to database")
 
 
 
