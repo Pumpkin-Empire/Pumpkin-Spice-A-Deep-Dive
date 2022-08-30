@@ -6,14 +6,14 @@ from datetime import datetime, timedelta, date
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import *
-import psycopg2
 
 hostname = config.hostname
 dbname = config.dbname
 uname = config.uname
 pwd = config.pwd
+port = config.port
 
-engine = create_engine("postgresql://{user}:{pw}@{host}/{db}".format(host=hostname, db=dbname, user=uname, pw=pwd), pool_size=20, max_overflow=0)
+engine = create_engine("postgresql://{user}:{pw}@{host}:{port}/{db}".format(host=hostname, port=port, db=dbname, user=uname, pw=pwd), pool_size=20, max_overflow=0)
 
 
 def get_date_string() -> str:
@@ -79,8 +79,8 @@ def append_dict_values(base_dict: dict, append_dict: dict) -> dict:
 def loop_connect() -> dict:
 
     # May be able to make these global, depending on the automation used later.
-    max_requests_per_call = 100
-    max_requests_per_window = 180
+    max_requests_per_call = 10
+    max_requests_per_window = 20
     url = create_url(max_requests_per_call)
 
     # Get Initial Response
