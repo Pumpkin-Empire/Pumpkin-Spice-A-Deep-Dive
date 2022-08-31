@@ -128,7 +128,7 @@ def add_tweets_to_db(response: dict):
 
 def add_users_to_db(response: dict):
     """Connects to postgres database and inserts Tweets to the users table."""
-    for acct in response['includes']['users']: ##maybe could make this ['includes']['users'] then update vars below?
+    for acct in response['includes']['users']:  # maybe could make this ['includes']['users'] then update vars below?
         Session = sessionmaker(bind=engine)
         session = Session()
         user = session.query(User).filter_by(user_id=acct['id']).first()
