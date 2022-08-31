@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS users (
 user_id text,
 username text,
 location text,
-follower_count text,
+follower_count int,
 following_count int,
 tweet_count int,
 acct_created date,

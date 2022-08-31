@@ -6,12 +6,19 @@ from datetime import datetime, timedelta, date
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import *
+import os
 
 hostname = config.hostname
 dbname = config.dbname
 uname = config.uname
 pwd = config.pwd
 port = config.port
+search = config.search
+# hostname=os.environ['HOSTNAME']
+# dbname=os.environ['DBNAME']
+# uname=os.environ['UNAME']
+# pwd=os.environ['PWD']
+# port=os.environ['PORT']
 
 engine = create_engine("postgresql://{user}:{pw}@{host}:{port}/{db}".format(host=hostname, port=port, db=dbname, user=uname, pw=pwd), pool_size=20, max_overflow=0)
 
@@ -27,9 +34,6 @@ def get_date_string() -> str:
     return str(yesterday) + time_and_formatting
 
 
-
-
-
 def auth():
     return config.bearer_token
 
@@ -41,7 +45,7 @@ def create_headers(bearer_token) -> dict:
 
 def create_url(max_results=10) -> tuple:
     search_url = "https://api.twitter.com/2/tweets/search/recent?"
-    query_params = {'query': "pumpkin spice",
+    query_params = {'query': search,
                     'start_time': get_date_string(),
                     'max_results': max_results,
                     'tweet.fields': 'entities,geo,public_metrics',
