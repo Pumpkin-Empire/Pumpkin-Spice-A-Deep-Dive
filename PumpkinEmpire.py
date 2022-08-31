@@ -129,7 +129,7 @@ def add_tweets_to_db(response: dict):
 
 
 def add_users_to_db(response: dict):
-    for acct in response['includes']['users']: ##maybe could make this ['includes']['users'] then update vars below?
+    for acct in response['includes']['users']:
         Session = sessionmaker(bind=engine)
         session = Session()
         user = session.query(User).filter_by(user_id=acct['id']).first()
