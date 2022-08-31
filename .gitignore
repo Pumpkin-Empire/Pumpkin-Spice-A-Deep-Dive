@@ -8,6 +8,7 @@ node_modules
 # Ignore SASS config files
 .sass-cache
 # Ignore API config file
-config.py
-/postgres-data/
+app/config.py
+
 __pycache__/
+postgres-data/

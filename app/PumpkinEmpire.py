@@ -1,4 +1,6 @@
 # import json
+import sys
+
 import requests
 import config
 # import pandas as pd
@@ -6,28 +8,33 @@ from datetime import datetime, timedelta, date
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import *
-import psycopg2
 
-hostname = config.hostname
-dbname = config.dbname
-uname = config.uname
-pwd = config.pwd
-
-engine = create_engine("postgresql://{user}:{pw}@{host}/{db}".format(host=hostname, db=dbname, user=uname, pw=pwd), pool_size=20, max_overflow=0)
+# try:
+#     hostname = config.hostname
+# except AttributeError:
+#     hostname = 'database'
+# try:
+#     dbname = config.dbname
+# except AttributeError:
+#     dbname = 'database'
+# try:
+#     uname = config.uname
+# except AttributeError:
+#     uname = 'postgres'
+# pwd = config.pwd
+# port = config.port
+# search = config.search
 
 
 def get_date_string() -> str:
     """Returns today's date and time from 24hrs ago, to use
     when searching for tweets from previous day. Formatted for Twitter API v2
     query:   '2022-08-23T00:01:00Z' """
-    yesterday = date.today() - timedelta(days = 1)
+    yesterday = date.today() - timedelta(days=1)
     # today = datetime.today().strftime('%Y-%m-%d')
     now = datetime.now()
     time_and_formatting  = 'T' + now.strftime("%H:%M:%S") + 'Z'
     return str(yesterday) + time_and_formatting
-
-
-
 
 
 def auth():
@@ -41,7 +48,7 @@ def create_headers(bearer_token) -> dict:
 
 def create_url(max_results=10) -> tuple:
     search_url = "https://api.twitter.com/2/tweets/search/recent?"
-    query_params = {'query': "pumpkin spice",
+    query_params = {'query': search,
                     'start_time': get_date_string(),
                     'max_results': max_results,
                     'tweet.fields': 'entities,geo,public_metrics',
@@ -79,8 +86,8 @@ def append_dict_values(base_dict: dict, append_dict: dict) -> dict:
 def loop_connect() -> dict:
 
     # May be able to make these global, depending on the automation used later.
-    max_requests_per_call = 100
-    max_requests_per_window = 180
+    max_requests_per_call = 10
+    max_requests_per_window = 20
     url = create_url(max_requests_per_call)
 
     # Get Initial Response
@@ -171,7 +178,48 @@ def add_users_to_db(response: dict):
 # print(json.dumps(loop_connect(), indent=4, sort_keys=True))
 
 if __name__ == "__main__":
+    try:
+        hostname = config.hostname
+    except AttributeError:
+        print('Please configure config.py, hostname')
+        sys.exit()
+    try:
+        dbname = config.dbname
+    except AttributeError:
+        print('Please configure config.py, dbname')
+        sys.exit()
+    try:
+        uname = config.uname
+    except AttributeError:
+        print('Please configure config.py, uname')
+        sys.exit()
+    try:
+        pwd = config.pwd
+    except AttributeError:
+        print('Please configure config.py, pwd')
+        sys.exit()
+    try:
+        port = config.port
+    except AttributeError:
+        print('Please configure config.py, port')
+        sys.exit()
+    try:
+        search = config.search
+    except AttributeError:
+        search = 'pumpkin spice'
+
     bearer_token = config.bearer_token
+
+    # production engine
+    engine = create_engine("postgresql://{user}:{pw}@{host}:{port}/{db}".format
+                           (host=hostname, port=port, db=dbname, user=uname, pw=pwd),
+                           pool_size=20, max_overflow=0)
+
+    # local engine
+    # engine = create_engine("postgresql://{user}:{pw}@{host}/{db}".format(
+    # host=hostname, db=dbname, user=uname, pw=pwd), pool_size=20,
+    # max_overflow=0)
+
     headers = create_headers(bearer_token)
     url = create_url()
     response = loop_connect()
