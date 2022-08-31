@@ -1,6 +1,5 @@
 # import json
 import sys
-
 import requests
 import config
 # import pandas as pd
@@ -8,22 +7,6 @@ from datetime import datetime, timedelta, date
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import *
-
-# try:
-#     hostname = config.hostname
-# except AttributeError:
-#     hostname = 'database'
-# try:
-#     dbname = config.dbname
-# except AttributeError:
-#     dbname = 'database'
-# try:
-#     uname = config.uname
-# except AttributeError:
-#     uname = 'postgres'
-# pwd = config.pwd
-# port = config.port
-# search = config.search
 
 
 def get_date_string() -> str:
@@ -38,15 +21,18 @@ def get_date_string() -> str:
 
 
 def auth():
+    """Get bearer token from """
     return config.bearer_token
 
 
 def create_headers(bearer_token) -> dict:
+    """Create headers for Twitter API request."""
     header = {"Authorization": "Bearer {}".format(bearer_token)}
     return header
 
 
 def create_url(max_results=10) -> tuple:
+    """Create full URL for Twitter API request."""
     search_url = "https://api.twitter.com/2/tweets/search/recent?"
     query_params = {'query': search,
                     'start_time': get_date_string(),
@@ -60,6 +46,7 @@ def create_url(max_results=10) -> tuple:
 
 
 def connect_to_api(url, headers, params, next_token=None):
+    """Create API connection"""
     params['next_token'] = next_token
     response = requests.request("GET", url, headers=headers, params=params)
     print("Endpoint Response Code: " + str(response.status_code))
@@ -84,10 +71,13 @@ def append_dict_values(base_dict: dict, append_dict: dict) -> dict:
 
 
 def loop_connect() -> dict:
+    """Connects to Twitter API multiple times. Current parameters for requests
+    per call and requests per window are based on free use of Twitter's API.
 
+    Returns: All responses appended to a single dict."""
     # May be able to make these global, depending on the automation used later.
-    max_requests_per_call = 10
-    max_requests_per_window = 20
+    max_requests_per_call = 100
+    max_requests_per_window = 180
     url = create_url(max_requests_per_call)
 
     # Get Initial Response
@@ -104,6 +94,7 @@ def loop_connect() -> dict:
 
 
 def add_tweets_to_db(response: dict):
+    """Connects to postgres database and inserts Tweets to the tweets table."""
     for twit in response['data']:
         Session = sessionmaker(bind=engine)
         session = Session()
@@ -136,6 +127,7 @@ def add_tweets_to_db(response: dict):
 
 
 def add_users_to_db(response: dict):
+    """Connects to postgres database and inserts Tweets to the users table."""
     for acct in response['includes']['users']: ##maybe could make this ['includes']['users'] then update vars below?
         Session = sessionmaker(bind=engine)
         session = Session()
@@ -157,25 +149,6 @@ def add_users_to_db(response: dict):
             session.commit()
     print("Successfully wrote to database")
 
-
-
-# loop_connect()
-# 180 tweets per 15 minutes.
-# bearer_token = config.bearer_token
-# headers = create_headers(bearer_token)
-# url = create_url()
-# json_response = connect_to_api(url[0], headers, url[1])
-# print(type(json_response))
-# print(json.dumps(json_response, indent=4, sort_keys=True))
-
-# dict1 = {'data': [{'user': 'roy', 'tweet': 'hey there friendo'}, {'user': 'kendra', 'tweet': \
-#   'nick get back to work'}], 'meta': [1, 2]}
-# dict2 = {'data': [{'user': 'bevin', 'tweet': 'not your friendo buddyo'}, {'user': 'kris', \
-#   'tweet': 'nick is MVP'}], 'meta': [3, 4]}
-# print(append_dict_values(dict1, dict2))
-
-# print(loop_connect())
-# print(json.dumps(loop_connect(), indent=4, sort_keys=True))
 
 if __name__ == "__main__":
     try:
