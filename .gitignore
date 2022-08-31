@@ -9,5 +9,5 @@ node_modules
 .sass-cache
 # Ignore API config file
 config.py
-
+/postgres-data/
 __pycache__/
