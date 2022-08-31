@@ -16,7 +16,7 @@ def get_date_string() -> str:
     yesterday = date.today() - timedelta(days=1)
     # today = datetime.today().strftime('%Y-%m-%d')
     now = datetime.now()
-    time_and_formatting  = 'T' + now.strftime("%H:%M:%S") + 'Z'
+    time_and_formatting = 'T' + now.strftime("%H:%M:%S") + 'Z'
     return str(yesterday) + time_and_formatting
 
 
@@ -48,11 +48,11 @@ def create_url(max_results=10) -> tuple:
 def connect_to_api(url, headers, params, next_token=None):
     """Create API connection"""
     params['next_token'] = next_token
-    response = requests.request("GET", url, headers=headers, params=params)
-    print("Endpoint Response Code: " + str(response.status_code))
-    if response.status_code != 200:
-        raise Exception(response.status_code, response.text)
-    return response.json()
+    twitter_response = requests.request("GET", url, headers=headers, params=params)
+    print("Endpoint Response Code: " + str(twitter_response.status_code))
+    if twitter_response.status_code != 200:
+        raise Exception(twitter_response.status_code, twitter_response.text)
+    return twitter_response.json()
 
 
 def append_dict_values(base_dict: dict, append_dict: dict) -> dict:
@@ -78,6 +78,10 @@ def loop_connect() -> dict:
     # May be able to make these global, depending on the automation used later.
     max_requests_per_call = 100
     max_requests_per_window = 180
+
+    # Create URL for response
+    bearer_token = config.bearer_token
+    headers = create_headers(bearer_token)
     url = create_url(max_requests_per_call)
 
     # Get Initial Response
@@ -93,11 +97,11 @@ def loop_connect() -> dict:
     return json_response
 
 
-def add_tweets_to_db(response: dict):
+def add_tweets_to_db(twitter_response: dict):
     """Connects to postgres database and inserts Tweets to the tweets table."""
-    for twit in response['data']:
-        Session = sessionmaker(bind=engine)
-        session = Session()
+    for twit in twitter_response['data']:
+        session_factory = sessionmaker(bind=engine)
+        session = session_factory()
         tweet = session.query(Tweet).filter_by(tweet_id=twit['id']).first()
         if not tweet:
             tweet_id = twit['id']
@@ -117,20 +121,20 @@ def add_tweets_to_db(response: dict):
                         place = None
             except KeyError:
                 place = None
-            date = datetime.today().strftime('%Y-%m-%d')
+            request_date = datetime.today().strftime('%Y-%m-%d')
             tweet = Tweet(tweet_id, author_id, tweet_text, like_count, quote_count,
-                          reply_count, retweet_count, place, date)
+                          reply_count, retweet_count, place, request_date)
 
             session.add(tweet)
             session.commit()
     print("Successfully wrote to database.")
 
 
-def add_users_to_db(response: dict):
+def add_users_to_db(twitter_response: dict):
     """Connects to postgres database and inserts Tweets to the users table."""
-    for acct in response['includes']['users']:  # maybe could make this ['includes']['users'] then update vars below?
-        Session = sessionmaker(bind=engine)
-        session = Session()
+    for acct in twitter_response['includes']['users']:
+        session_factory = sessionmaker(bind=engine)
+        session = session_factory()
         user = session.query(User).filter_by(user_id=acct['id']).first()
         if not user:
             user_id = acct['id']
@@ -181,8 +185,6 @@ if __name__ == "__main__":
     except AttributeError:
         search = 'pumpkin spice'
 
-    bearer_token = config.bearer_token
-
     # production engine
     engine = create_engine("postgresql://{user}:{pw}@{host}:{port}/{db}".format
                            (host=hostname, port=port, db=dbname, user=uname, pw=pwd),
@@ -190,11 +192,9 @@ if __name__ == "__main__":
 
     # local engine
     # engine = create_engine("postgresql://{user}:{pw}@{host}/{db}".format(
-    # host=hostname, db=dbname, user=uname, pw=pwd), pool_size=20,
-    # max_overflow=0)
+    #     host=hostname, db=dbname, user=uname, pw=pwd), pool_size=20,
+    #     max_overflow=0)
 
-    headers = create_headers(bearer_token)
-    url = create_url()
     response = loop_connect()
     add_tweets_to_db(response)
     add_users_to_db(response)
