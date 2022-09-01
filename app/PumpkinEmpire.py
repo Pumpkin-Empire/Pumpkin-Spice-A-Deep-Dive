@@ -117,6 +117,7 @@ def add_tweets_to_db(twitter_response: dict):
                     try:
                         if type(twit['entities']['annotations']) == dict:
                             place = twit.get('entities', {}).get('annotations', {}).get('normalized_text')
+                            print(twit.get('entities', {}).get('annotations', {}).get('normalized_text'))
                     except KeyError:
                         place = None
             except KeyError:
