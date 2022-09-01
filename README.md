@@ -67,7 +67,7 @@ The first query you wish to make a pipeline for is simple to get started. Naviga
 ```
 docker-compose up -d
 ```
-![docker-compose up -d](/static/initialcompose.png)
+![docker-compose up -d](/static/initialcompose.png =100)
 
 From here there are a few things that can be looked at:
 
@@ -115,6 +115,8 @@ The database page shows us the tables that were created. Either can be selected 
 To create another pipeline using another search string is easy.
 
 First, be sure to stop any running containers in the first pipeline. The new one will use the same ports, so it cannot run concurrently. You can do this by clicking the project in the Docker dashboard, then pressing the stop button for any running processes.
+
+![Docker stop](/static/dockerstop.png)
 
 Open config.py and update the search to a string of your choosing (comparison operators and 'AND' will throw errors, so please refer to the early query building link on how to implement them).
 
