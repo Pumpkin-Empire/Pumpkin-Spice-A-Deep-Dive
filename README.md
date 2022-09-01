@@ -67,7 +67,7 @@ The first query you wish to make a pipeline for is simple to get started. Naviga
 ```
 docker-compose up -d
 ```
-![docker-compose up -d](/static/initialcompose.png =100)
+![docker-compose up -d](/static/initialcompose.png)
 
 From here there are a few things that can be looked at:
 
