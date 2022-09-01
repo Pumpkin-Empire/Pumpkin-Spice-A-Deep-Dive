@@ -8,29 +8,28 @@ import plotly.express as px
 import matplotlib.pyplot as plt
 import re as re
 import seaborn as sns
-
-
-### data load here###
-
-hostname = config.hostname
-dbname = config.dbname
-uname = config.uname
-pwd = config.pwd
-
-engine = create_engine("postgresql://{user}:{pw}@{host}/{db}".format(host=hostname, db=dbname, user=uname, pw=pwd), pool_size=20, max_overflow=0)
-
-## data frames ##
-
-tweets = pd.read_sql("SELECT * FROM tweets", con=engine)
-tweets['date'] = pd.to_datetime(tweets['date'])
-tweets['Reply'] = tweets['tweet_text'].str.startswith('@')
-tweets['RT'] = tweets['tweet_text'].str.startswith('RT')
-users = pd.read_sql("SELECT * FROM users", con=engine)
-users['acct_created'] = pd.to_datetime(users['acct_created'])
-
+import psycopg2
 
 st.set_page_config(page_title="Pumpkin Empire: a Pumpkin Spice Tweets Journey",
                    layout='wide')
+
+### data load here, initialize connection ###
+@st.experimental_singleton
+def init_connection():
+    return psycopg2.connect(**st.secrets["postgres"])
+
+conn = init_connection()
+
+
+
+## data frames ##
+tweets = pd.read_sql("SELECT * FROM tweets", conn)
+tweets['date'] = pd.to_datetime(tweets['date'])
+tweets['Reply'] = tweets['tweet_text'].str.startswith('@')
+tweets['RT'] = tweets['tweet_text'].str.startswith('RT')
+users = pd.read_sql("SELECT * FROM users", conn)
+users['acct_created'] = pd.to_datetime(users['acct_created'])
+
 
 ######  Setting up the app  #####
 
@@ -42,6 +41,7 @@ st.markdown("<h1 style='text-align: center; color: black; '>Pumpkin Empire: a Pu
 
 st.markdown("<h3 style='text-align: center; color:grey;'>Exploring the polarizing topic of Pumpkin Spice, one tweet at a time</h3>", unsafe_allow_html=True)
 st.markdown(" ")
+
 
 col1, col2, col3 = st.columns([1, 1, 2])
 
