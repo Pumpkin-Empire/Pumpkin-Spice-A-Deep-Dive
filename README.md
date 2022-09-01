@@ -129,3 +129,5 @@ Replace \<name> with a name of your choosing for the new image.
 
 After the image builds, it will be viewable in the Docker dashboard, and have available to it all the same features of the first pipeline.
 
+![Multiple pipelines](/static/multiplepipelines.png)
+
