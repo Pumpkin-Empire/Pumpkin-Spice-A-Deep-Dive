@@ -58,5 +58,10 @@ pwd='docker'
 **Note:**If you would like to build a database on a search for something other than 'pumpkin spice', update 'search' in the app/config.py file made earlier. Reference for making a query can be found here:
 - [Building queries for Search Tweets](https://developer.twitter.com/en/docs/twitter-api/tweets/search/integrate/build-a-query)
 
+**First Pipeline**
 
-
+The first query you wish to make a pipeline for is simple to get started. Navigate to the project's folder in the command line and enter the following command:
+```
+docker-compose up -d
+```
+![docker-compose up -d](/static/initialcompose.png)
