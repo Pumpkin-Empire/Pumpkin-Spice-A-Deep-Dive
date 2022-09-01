@@ -29,6 +29,7 @@ tweets['Reply'] = tweets['tweet_text'].str.startswith('@')
 tweets['RT'] = tweets['tweet_text'].str.startswith('RT')
 users = pd.read_sql("SELECT * FROM users", conn)
 users['acct_created'] = pd.to_datetime(users['acct_created'])
+mergedDF = pd.merge(tweets, users, how="left", left_on="author_id", right_on="user_id")
 
 
 ######  Setting up the app  #####
@@ -59,16 +60,72 @@ with col1:
     colors = sns.color_palette('rocket_r')[0:4]
     # create pie chart
     fig = plt.figure()
-    plt.pie(len_data, labels=item_data, colors=colors, autopct='%.0f%%')
+    plt.pie(len_data, labels=item_data, colors=colors, autopct='%.0f%%', textprops={'fontsize': 14})
 
     st.pyplot(fig)
 
 with col2:
-    st.markdown('column 2')
+    st.subheader("There are {} different users".format(users['username'].nunique()))
+    usertweets = mergedDF.groupby('username')
+    st.write(usertweets.count()['tweet_text'].sort_values(ascending=False)[:6])
 
 with col3:
-    fig = plt.figure()
-    plt.plot([1,2,3,4,5])
+    ###finding hashtags and counting to get top hashtags used ###
+    hashtags = []
+    hashtag_pattern = re.compile(r"#[a-zA-Z]+")
+    hashtag_matches = list(tweets['tweet_text'].apply(hashtag_pattern.findall))
+    hashtag_dict = {}
+    for match in hashtag_matches:
+        for singlematch in match:
+            if singlematch not in hashtag_dict.keys():
+                hashtag_dict[singlematch] = 1
+            else:
+                hashtag_dict[singlematch] = hashtag_dict[singlematch] + 1
+    hashtag_ordered_list = sorted(hashtag_dict.items(), key=lambda x: x[1])
+    hashtag_ordered_list = hashtag_ordered_list[::-1]
+    hashtag_ordered_values = []
+    hashtag_ordered_keys = []
+    for item in hashtag_ordered_list[:11]:
+        hashtag_ordered_keys.append(item[0])
+        hashtag_ordered_values.append(item[1])
+
+    fig, ax = plt.subplots(figsize=(12, 12))
+    y_pos = np.arange(len(hashtag_ordered_keys))
+    ax.barh(y_pos, list(hashtag_ordered_values)[::-1], align='center', color='green', edgecolor='black', linewidth=1)
+    ax.set_yticks(y_pos)
+    ax.set_yticklabels(list(hashtag_ordered_keys)[::-1])
+    ax.set_xlabel("Number of tags")
+    ax.set_title("Most used #hashtags", fontsize=20)
+    plt.tight_layout(pad=3)
+
+    st.pyplot(fig)
+
+####mentions data for most mentions chart####
+    mentions = []
+    mention_pattern = re.compile(r"@[a-zA-z_]+")
+    mention_matches = list(tweets['tweet_text'].apply(mention_pattern.findall))
+    mentions_dict = {}
+    for match in mention_matches:
+        for singlematch in match:
+            if singlematch not in mentions_dict.keys():
+                mentions_dict[singlematch] = 1
+            else:
+                mentions_dict[singlematch] = mentions_dict[singlematch] + 1
+    mentions_ordered_list = sorted(mentions_dict.items(), key=lambda x: x[1])
+    mentions_ordered_list = mentions_ordered_list[::-1]
+    mentions_ordered_values = []
+    mentions_ordered_keys = []
+    for item in mentions_ordered_list[:11]:
+        mentions_ordered_keys.append(item[0])
+        mentions_ordered_values.append(item[1])
+
+    fig, ax = plt.subplots(figsize=(12, 12))
+    y_pos = np.arange(len(mentions_ordered_values))
+    ax.barh(y_pos, list(mentions_ordered_values)[::-1], align='center', color='yellow', edgecolor='black', linewidth=1)
+    ax.set_yticks(y_pos)
+    ax.set_yticklabels(list(mentions_ordered_keys)[::-1])
+    ax.set_xlabel("Number of Mentions")
+    ax.set_title("Most Frequently Mentioned Accounts", fontsize=20)
 
     st.pyplot(fig)
 
