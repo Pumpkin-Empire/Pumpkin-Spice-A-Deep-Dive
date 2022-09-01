@@ -1,63 +1,62 @@
-# Pumpkin-Spice-A-Deep-Dive
+#Pumpkin-Empire: A data pipeline using Twitter API, Postgres, Jupyter Notebook, Pandas, and Docker
+***
 
-## Current Plan
+##About
 
-1. Research twitter apis to find out what data is available.
-   - Location
-    - Date
-    - Tweet
-    - Demographic
-    - Reactions 
-    - Retweets
-2. Save data to SQL database (postgresql)
-3. Set up api get requests to pull data
-4. Investigate initial data.
-    - Make initial data plan (basic analysis)
-    - Plan & timeline for additional data analysis/buildout  based on available data & time available
-5. Set up docker/airflow and spark to do scheduled pulls of data
-6. Analyze data and make presentable project (jupyter notebook, powerpoint presentation or other? I.e. interactive app if time)
-7. Additional buildout based on time
+A group project to better learn how to build a reproducible ETL data pipeline.
 
-**Avenues of analysis**
-  - Word map
-  - Businesses mentioned
-  - Frequency throughout day
-  - Frequency day after day
-  - Sentiment analysis over time
-  - Demographics of the tweeter
-  - Location of tweeter/tweet
+Docker is used to launch the ETL, though some set up is required (see below). Python is used to get tweets from Twitter API v2 and store them in a PostgreSQL database. This data is loaded in to a Jupyter Notebook for analysis by using the Pandas library for its DataFrames and various other analytics tools (nltk, Matplotlib, sns, Textblob...)
 
 
-### Database Tables Creation
+##Scenario
+Pumpkin Spice season is no longer relegated to Autumn. Twitter has something to say about everything, and this should be no different. Find the sentiment across Twitter in regards to Pumpkin Spice products.
 
-The following tables were created in a postgres Database in order to load the data from the Twitter API pull
+##Concepts
+- Data Engineering
+- ETL (Extract, Transform, Load)
+- REST APIs
+- Python scripts
+- SQL & PostgreSQL
+- Docker Containerization
+- Jupyter Notebooks
+- Pandas
+- Data Analysis
 
-**Tweets table**
+##Prerequisites
+- Docker (with CLI & Docker-Compose)
+
+##Set-up
+-  Download or pull this repository to your desired location.
+-  Get Twitter API access keys & tokens (total of 5)[Twitter API](https://developer.twitter.com/en/docs/twitter-api/getting-started/getting-access-to-the-twitter-api)
+- Create a file called 'config.py' in the app/ folder of this project. This file will hold your Twitter API access information and postgres connection. The only fields that need to be filled out are: 
+	- consumer\_key
+	- consumer\_secret 
+	- access\_token 
+	- access\_token\_secret 
+	- bearer\_token
+
 ```
-CREATE TABLE tweets (
-tweet_id text,
-author_id text,
-tweet_text text,
-like_count int,
-quote_count int,
-reply_count int,
-retweet_count int,
-place text,
-date date,
-PRIMARY KEY(tweet_id)
-);
-```
+# Twitter API Access
+consumer_key = "<your consumer key>"
+consumer_secret = "<your consumer secret"
+access_token = "<your access token>"
+access_token_secret = "<you access token secret"
+bearer_token = "<your bearer token>"
 
-**Users table**
+# Search
+search='pumpkin spice'
+
+# postgres connection
+hostname='database'
+port='5432'
+dbname='database'
+uname='postgres'
+pwd='docker'
 ```
-CREATE TABLE users (
-user_id text,
-username text,
-location text,
-follower_count text,
-following_count int,
-tweet_count int,
-acct_created date,
-PRIMARY KEY(user_id)
-);
-```
+## Starting the Pipeline
+
+**Note:**If you would like to build a database on a search for something other than 'pumpkin spice', update 'search' in the app/config.py file made earlier. Reference for making a query can be found here:
+- [Building queries for Search Tweets](https://developer.twitter.com/en/docs/twitter-api/tweets/search/integrate/build-a-query)
+
+
+
