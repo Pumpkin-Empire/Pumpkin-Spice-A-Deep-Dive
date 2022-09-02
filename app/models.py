@@ -33,11 +33,10 @@ class Tweet(Base):
     quote_count = Column(Integer)
     reply_count = Column(Integer)
     retweet_count = Column(Integer)
-    place = Column(String)
     date = Column(Date)
 
     def __init__(self, tweet_id, author_id, tweet_text, like_count, quote_count,
-                 reply_count, retweet_count, place, date):
+                 reply_count, retweet_count, date):
         self.tweet_id = tweet_id
         self.author_id = author_id
         self.tweet_text = tweet_text
@@ -45,7 +44,6 @@ class Tweet(Base):
         self.quote_count = quote_count
         self.reply_count = reply_count
         self.retweet_count = retweet_count
-        self.place = place
         self.date = date
 
 

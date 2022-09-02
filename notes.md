@@ -17,6 +17,7 @@
 5. Set up docker/airflow and spark to do scheduled pulls of data
 6. Analyze data and make presentable project (jupyter notebook, powerpoint presentation or other? I.e. interactive app if time)
 7. Additional buildout based on time
+8. Implement auto-analysis via Streamlit as part of the docker-compose, in addition to our notebook.
 
 **Avenues of analysis**
   - Word map
@@ -32,6 +33,8 @@
 
 The following tables were created in a postgres Database in order to load the data from the Twitter API pull
 
+>'place' was originally in the tweets table, but removed due to inconsistencies on when it was present in the API response.
+
 **Tweets table**
 ```
 CREATE TABLE tweets (
@@ -42,7 +45,6 @@ like_count int,
 quote_count int,
 reply_count int,
 retweet_count int,
-place text,
 date date,
 PRIMARY KEY(tweet_id)
 );

@@ -111,20 +111,20 @@ def add_tweets_to_db(twitter_response: dict):
             quote_count = twit['public_metrics']['quote_count']
             reply_count = twit['public_metrics']['reply_count']
             retweet_count = twit['public_metrics']['retweet_count']
-            place = ''
-            try:
-                if type(twit['entities']) == dict:
-                    try:
-                        if type(twit['entities']['annotations']) == dict:
-                            place = twit.get('entities', {}).get('annotations', {}).get('normalized_text')
-                            print(twit.get('entities', {}).get('annotations', {}).get('normalized_text'))
-                    except KeyError:
-                        place = None
-            except KeyError:
-                place = None
+            # place = ''
+            # try:
+            #     if type(twit['entities']) == dict:
+            #         try:
+            #             if type(twit['entities']['annotations']) == dict:
+            #                 place = twit.get('entities', {}).get('annotations', {}).get('normalized_text')
+            #                 print(twit.get('entities', {}).get('annotations', {}).get('normalized_text'))
+            #         except KeyError:
+            #             place = None
+            # except KeyError:
+            #     place = None
             request_date = datetime.today().strftime('%Y-%m-%d')
             tweet = Tweet(tweet_id, author_id, tweet_text, like_count, quote_count,
-                          reply_count, retweet_count, place, request_date)
+                          reply_count, retweet_count, request_date)
 
             session.add(tweet)
             session.commit()
