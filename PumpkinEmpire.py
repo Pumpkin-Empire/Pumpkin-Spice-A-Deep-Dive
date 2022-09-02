@@ -1,6 +1,6 @@
 # import json
 import requests
-import config
+from app import config
 # import pandas as pd
 from datetime import datetime, timedelta, date
 from sqlalchemy import create_engine
