@@ -1,10 +1,14 @@
 import sys
 import requests
+from app import config
 import config
+# import pandas as pd
 from datetime import datetime, timedelta, date
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import *
+import psycopg2
+
 
 
 def get_date_string() -> str:
