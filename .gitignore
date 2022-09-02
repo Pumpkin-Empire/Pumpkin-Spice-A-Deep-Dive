@@ -9,7 +9,9 @@ node_modules
 .sass-cache
 # Ignore API config file
 app/config.py
+config.py
 
 __pycache__/
 postgres-data/
 notes.md
+.streamlit/secrets.toml
