@@ -1,20 +1,20 @@
 import numpy as np
 import streamlit as st
 import pandas as pd
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 import config
 import plotly.express as px
 import matplotlib.pyplot as plt
 import re as re
 import seaborn as sns
 import psycopg2
-# from wordcloud import WordCloud, STOPWORDS
-# import nltk
-# from nltk.tokenize.api import TokenizerI
-# from sklearn import model_selection
-# from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-# from sklearn.metrics.pairwise import cosine_distances
+from wordcloud import WordCloud, STOPWORDS
+import nltk
+from nltk.tokenize.api import TokenizerI
+from sklearn import model_selection
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_distances
+from nltk.corpus import stopwords
+
 
 
 def get_most_hashtags(data):
@@ -76,38 +76,68 @@ def get_most_mentions(data):
     ax.set_title("Most Frequently Mentioned Accounts", fontsize=20)
     return fig
 
-def wordcloud(data):
-    # Tweet sentiment Analysis
+# def create_wordcloud(data):
+#     # Tweet sentiment Analysis
+#     train, test = model_selection.train_test_split(data, test_size=0.3, train_size=0.7, random_state=10)
+#     # Get stop words to omit from analysis
+#     stopword = stopwords.words('english')
+#     # adding some irrelevant words to our stopwords after running the tokenizer below.
+#     extended_stop = ['https', 'stud_status', '//t.co/7pw885i0zw', 'ashnikko', 'lvnareclps', "n't", 'digitalprex',
+#                      '//t.co/qthygenygi',
+#                      'ik', 'een', 'heb', 'ca', 'teresamaly', 'bigtoofedblonde', 'ikuflyinn', 'mi', 'llego', 'en',
+#                      'kaars', 'botten',
+#                      'kaarsen', 'fuck', 'fuc', 'bitch']
+#     stopword.extend(extended_stop)
+#
+#     # Define tokenization function
+#
+#     def common_word_getter(row):
+#         words = row.tweet_text.lower()
+#         words = nltk.word_tokenize(words)
+#         frequency = nltk.FreqDist(words)
+#         frequency = [(w, f) for (w, f) in frequency.items() if w.lower() not in stopword]
+#         frequency = [(w, f) for (w, f) in frequency if len(w) > 1]
+#         frequency.sort(key=lambda tup: tup[1], reverse=True)
+#         most_common = frequency[:5]
+#         return most_common
+#
+#         common_list = []
+#         for index, row in train.iterrows():
+#             common_list.extend([i[0] for i in common_word_getter(row)])
+#         vect = CountVectorizer(stop_words=stopword, max_features=10)
+#         train_vectors = vect.fit_transform(train.tweet_text)
+#         vect.get_feature_names_out()
+#         test_vectors = vect.transform(test.tweet_text)
+#         average_vector = train_vectors.mean(axis=0)
+#         scores = cosine_distances(X=average_vector, Y=test_vectors)
+#         STOPWORDS.update(extended_stop)
+
+def show_wordcloud(data, title=None):
     train, test = model_selection.train_test_split(data, test_size=0.3, train_size=0.7, random_state=10)
-    # Get stop words to omit from analysis
-    from nltk.corpus import stopwords
     stopword = stopwords.words('english')
     # adding some irrelevant words to our stopwords after running the tokenizer below.
     extended_stop = ['https', 'stud_status', '//t.co/7pw885i0zw', 'ashnikko', 'lvnareclps', "n't", 'digitalprex',
                      '//t.co/qthygenygi',
                      'ik', 'een', 'heb', 'ca', 'teresamaly', 'bigtoofedblonde', 'ikuflyinn', 'mi', 'llego', 'en',
                      'kaars', 'botten',
-                     'kaarsen', 'fuck', 'fuc', 'bitch']
+                     'kaarsen', 'fuck', 'fuc', 'bitch', 'like_count', 'False', 'tweet_id', 'RT', 'author_id', 'rows',
+                     'm', 'gt', 'True', 'polarity', 'sentiment', 'columns', 'positive', 'negative', 'neutral',
+                     'Reply', 'x']
     stopword.extend(extended_stop)
+    STOPWORDS.update(extended_stop)
 
-    # Define tokenization function
-    @st.cache
-    def common_word_getter(row):
-        words = row.tweet_text.lower()
-        words = nltk.word_tokenize(words)
-        frequency = nltk.FreqDist(words)
-        frequency = [(w, f) for (w, f) in frequency.items() if w.lower() not in stopword]
-        frequency = [(w, f) for (w, f) in frequency if len(w) > 1]
-        frequency.sort(key=lambda tup: tup[1], reverse=True)
-        most_common = frequency[:5]
-        return most_common
+    wordcloud = WordCloud(
+        background_color='white',
+        stopwords=STOPWORDS,
+        max_words=200,
+        max_font_size=40,
+        scale=3,
+        random_state=1 # chosen at random by flipping a coin; it was heads
+    ).generate(str(data))
 
-    common_list = []
-    for index, row in train.iterrows():
-        common_list.extend([i[0] for i in common_word_getter(row)])
-    vect = CountVectorizer(stop_words=stopword, max_features=10)
-    train_vectors = vect.fit_transform(train.tweet_text)
-    vect.get_feature_names_out()
-    test_vectors = vect.transform(test.tweet_text)
-    average_vector = train_vectors.mean(axis=0)
-    scores = cosine_distances(X=average_vector, Y=test_vectors)
+    plt.imshow(wordcloud, interpolation= 'bilinear')
+    plt.axis('off')
+    plt.show()
+
+
+

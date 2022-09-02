@@ -85,6 +85,7 @@ def loop_connect() -> dict:
 
     # Get Initial Response
     json_response = connect_to_api(url[0], headers, url[1])
+    print(json_response['meta']['next_token'])
 
     # Update how many items we can request
     requests_per_call = max_requests_per_window - max_requests_per_call

@@ -9,7 +9,8 @@ import matplotlib.pyplot as plt
 import re as re
 import seaborn as sns
 import psycopg2
-from utils import get_most_hashtags, get_most_mentions
+from textblob import TextBlob
+from utils import get_most_hashtags, get_most_mentions, show_wordcloud
 
 st.set_page_config(page_title="Pumpkin Empire: a Pumpkin Spice Tweets Journey",
                    layout='wide')
@@ -28,6 +29,8 @@ tweets = pd.read_sql("SELECT * FROM tweets", conn)
 tweets['date'] = pd.to_datetime(tweets['date'])
 tweets['Reply'] = tweets['tweet_text'].str.startswith('@')
 tweets['RT'] = tweets['tweet_text'].str.startswith('RT')
+tweets['polarity'] = tweets['tweet_text'].apply(lambda x: TextBlob(x).sentiment[0])
+tweets['sentiment'] = tweets['polarity'].apply(lambda x: 'positive' if x > 0 else('negative' if x<0 else 'neutral'))
 users = pd.read_sql("SELECT * FROM users", conn)
 users['acct_created'] = pd.to_datetime(users['acct_created'])
 mergedDF = pd.merge(tweets, users, how="left", left_on="author_id", right_on="user_id")
@@ -65,6 +68,9 @@ with col1:
 
     st.pyplot(fig)
 
+    tweet_sentiment = tweets.groupby(tweets['sentiment'])
+    st.table(tweet_sentiment.size())
+
 with col2:
     st.subheader("There are {} different users".format(users['username'].nunique()))
     usertweets = mergedDF.groupby('username')
@@ -85,15 +91,16 @@ with st.expander("Word Cloud"):
 
     with col1:
         st.subheader("Positive")
-        st.markdown("insert positive wordcloud here")
+        st.pyplot(show_wordcloud(tweets.loc[tweets['sentiment'] == 'positive']))
+
 
     with col2:
-        st.subheader("negative")
-        st.markdown("insert negative wordcloud")
+        st.subheader("Negative")
+        st.pyplot(show_wordcloud(tweets.loc[tweets['sentiment'] == 'negative']))
 
     with col3:
-        st.subheader("neutral")
-        st.markdown("insert neutral wordcloud")
+        st.subheader("Neutral")
+        st.pyplot(show_wordcloud(tweets.loc[tweets['sentiment'] == 'neutral']))
 
 
 if st.checkbox('Show raw data'):
