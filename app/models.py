@@ -45,7 +45,3 @@ class Tweet(Base):
         self.reply_count = reply_count
         self.retweet_count = retweet_count
         self.date = date
-
-
-
-

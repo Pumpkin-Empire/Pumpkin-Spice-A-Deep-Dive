@@ -1,8 +1,6 @@
-# import json
 import sys
 import requests
 import config
-# import pandas as pd
 from datetime import datetime, timedelta, date
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -111,24 +109,12 @@ def add_tweets_to_db(twitter_response: dict):
             quote_count = twit['public_metrics']['quote_count']
             reply_count = twit['public_metrics']['reply_count']
             retweet_count = twit['public_metrics']['retweet_count']
-            # place = ''
-            # try:
-            #     if type(twit['entities']) == dict:
-            #         try:
-            #             if type(twit['entities']['annotations']) == dict:
-            #                 place = twit.get('entities', {}).get('annotations', {}).get('normalized_text')
-            #                 print(twit.get('entities', {}).get('annotations', {}).get('normalized_text'))
-            #         except KeyError:
-            #             place = None
-            # except KeyError:
-            #     place = None
             request_date = datetime.today().strftime('%Y-%m-%d')
             tweet = Tweet(tweet_id, author_id, tweet_text, like_count, quote_count,
                           reply_count, retweet_count, request_date)
-
             session.add(tweet)
             session.commit()
-    print("Successfully wrote to database.")
+    print("Successfully wrote tweets to database.")
 
 
 def add_users_to_db(twitter_response: dict):
@@ -152,7 +138,7 @@ def add_users_to_db(twitter_response: dict):
 
             session.add(user)
             session.commit()
-    print("Successfully wrote to database")
+    print("Successfully wrote users to database")
 
 
 if __name__ == "__main__":
