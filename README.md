@@ -36,6 +36,8 @@ Pumpkin Spice season is no longer relegated to Autumn. Twitter has something to 
 	- access\_token\_secret 
 	- bearer\_token
 
+>config.py
+
 ```
 # Twitter API Access
 consumer_key = "<your consumer key>"
@@ -47,6 +49,8 @@ bearer_token = "<your bearer token>"
 # Search
 search='pumpkin spice'
 ```
+
+
 ***
 ## Starting the Pipeline
 
