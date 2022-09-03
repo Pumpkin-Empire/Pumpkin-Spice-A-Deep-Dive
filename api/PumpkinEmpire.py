@@ -1,5 +1,6 @@
 import sys
 import requests
+import time
 import db_con
 from datetime import datetime, timedelta, date
 from sqlalchemy import create_engine
@@ -30,7 +31,7 @@ def create_headers(bearer_token) -> dict:
     return header
 
 
-def create_url(max_results=10) -> tuple:
+def create_url(max_results=100) -> tuple:
     """Create full URL for Twitter API request."""
     search_url = "https://api.twitter.com/2/tweets/search/recent?"
     query_params = {'query': search,
@@ -48,7 +49,7 @@ def connect_to_api(url, headers, params, next_token=None):
     """Create API connection"""
     params['next_token'] = next_token
     twitter_response = requests.request("GET", url, headers=headers, params=params)
-    print("Endpoint Response Code: " + str(twitter_response.status_code))
+    print("Endpoint Response Code: " + str(twitter_response.status_code), flush=True)
     if twitter_response.status_code != 200:
         raise Exception(twitter_response.status_code, twitter_response.text)
     return twitter_response.json()
@@ -69,34 +70,65 @@ def append_dict_values(base_dict: dict, append_dict: dict) -> dict:
     return base_dict
 
 
-def loop_connect(next='') -> dict:
+def loop_connect(next_token) -> tuple:
     """Connects to Twitter API multiple times. Current parameters for requests
     per call and requests per window are based on free use of Twitter's API.
 
     Returns: All responses appended to a single dict."""
     # May be able to make these global, depending on the automation used later.
-    max_requests_per_call = 10
-    max_requests_per_window = 20
+    max_requests_per_call = 100
+    max_requests_per_window = 180
 
     # Create URL for response
     bearer_token = config.bearer_token
     headers = create_headers(bearer_token)
     url = create_url(max_requests_per_call)
+    next_token = next_token
 
     # Get Initial Response
-    json_response = connect_to_api(url[0], headers, url[1])
+    json_response = connect_to_api(url[0], headers, url[1], next_token)
 
     # Update how many items we can request
     requests_per_call = max_requests_per_window - max_requests_per_call
     while requests_per_call > 0:
         url = create_url(requests_per_call)
         temp_response = connect_to_api(url[0], headers, url[1], json_response['meta']['next_token'])
+        next_token = json_response['meta']['next_token']
         json_response = append_dict_values(json_response, temp_response)
         requests_per_call = requests_per_call - max_requests_per_call
-    return json_response
+    return json_response, next_token
 
 
-def add_tweets_to_db(twitter_response: dict):
+def connect_loop():
+
+    next_token = None
+
+    while True:
+
+        # Open postgres connection
+        engine = create_engine("postgresql://{user}:{pw}@{host}:{port}/{db}".format
+                               (host=hostname, port=port, db=dbname, user=uname, pw=pwd),
+                               pool_size=20, max_overflow=0)
+        print("Database connection opened", flush=True)
+        # local engine
+        # engine = create_engine("postgresql://{user}:{pw}@{host}/{db}".format(
+        #     host=hostname, db=dbname, user=uname, pw=pwd), pool_size=20,
+        #     max_overflow=0)
+
+        response, next_token = loop_connect(next_token)
+        add_tweets_to_db(response, engine)
+        add_users_to_db(response, engine)
+
+        # End postgres connection
+        engine.dispose()
+        print("Database connection closed", flush=True)
+
+        # Wait ~15min for next request
+        print("\nWaiting 15 minutes until next request\n", flush=True)
+        time.sleep(900)
+
+
+def add_tweets_to_db(twitter_response: dict, engine):
     """Connects to postgres database and inserts Tweets to the tweets table."""
     for twit in twitter_response['data']:
         session_factory = sessionmaker(bind=engine)
@@ -116,10 +148,10 @@ def add_tweets_to_db(twitter_response: dict):
                           reply_count, retweet_count, request_date, topic)
             session.add(tweet)
             session.commit()
-    print("Successfully wrote tweets to database.")
+    print("Successfully wrote tweets to database.", flush=True)
 
 
-def add_users_to_db(twitter_response: dict):
+def add_users_to_db(twitter_response: dict, engine):
     """Connects to postgres database and inserts Tweets to the users table."""
     for acct in twitter_response['includes']['users']:
         session_factory = sessionmaker(bind=engine)
@@ -140,10 +172,11 @@ def add_users_to_db(twitter_response: dict):
 
             session.add(user)
             session.commit()
-    print("Successfully wrote users to database")
+    print("Successfully wrote users to database", flush=True)
 
 
 if __name__ == "__main__":
+    print("Attempting to get configuration from config.py")
     try:
         hostname = db_con.hostname
     except AttributeError:
@@ -173,17 +206,8 @@ if __name__ == "__main__":
         search = config.search
     except AttributeError:
         search = 'uhh'
+    print("Configuration set.\n")
 
-    # production engine
-    engine = create_engine("postgresql://{user}:{pw}@{host}:{port}/{db}".format
-                           (host=hostname, port=port, db=dbname, user=uname, pw=pwd),
-                           pool_size=20, max_overflow=0)
+    print("Beginning request cycle.")
 
-    # local engine
-    # engine = create_engine("postgresql://{user}:{pw}@{host}/{db}".format(
-    #     host=hostname, db=dbname, user=uname, pw=pwd), pool_size=20,
-    #     max_overflow=0)
-
-    response = loop_connect()
-    add_tweets_to_db(response)
-    add_users_to_db(response)
+    connect_loop()
