@@ -69,7 +69,7 @@ def append_dict_values(base_dict: dict, append_dict: dict) -> dict:
     return base_dict
 
 
-def loop_connect() -> dict:
+def loop_connect(next='') -> dict:
     """Connects to Twitter API multiple times. Current parameters for requests
     per call and requests per window are based on free use of Twitter's API.
 
@@ -111,8 +111,9 @@ def add_tweets_to_db(twitter_response: dict):
             reply_count = twit['public_metrics']['reply_count']
             retweet_count = twit['public_metrics']['retweet_count']
             request_date = datetime.today().strftime('%Y-%m-%d')
+            topic = config.search
             tweet = Tweet(tweet_id, author_id, tweet_text, like_count, quote_count,
-                          reply_count, retweet_count, request_date)
+                          reply_count, retweet_count, request_date, topic)
             session.add(tweet)
             session.commit()
     print("Successfully wrote tweets to database.")
@@ -171,7 +172,7 @@ if __name__ == "__main__":
     try:
         search = config.search
     except AttributeError:
-        search = 'pumpkin spice'
+        search = 'uhh'
 
     # production engine
     engine = create_engine("postgresql://{user}:{pw}@{host}:{port}/{db}".format
