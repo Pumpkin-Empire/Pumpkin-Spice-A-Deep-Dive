@@ -1,16 +1,11 @@
-import os, sys
-import config
+import sys
 import requests
 import db_con
 from datetime import datetime, timedelta, date
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import *
-
-# Adding parent directory to import config.py
-current = os.path.dirname(os.path.realpath(__file__))
-parent = os.path.dirname(current)
-sys.path.append(parent)
+import config
 
 
 def get_date_string() -> str:

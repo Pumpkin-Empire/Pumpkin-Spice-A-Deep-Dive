@@ -9,13 +9,9 @@ import seaborn as sns
 import psycopg2
 from textblob import TextBlob
 from utils import get_most_hashtags, get_most_mentions, show_wordcloud
-import os, sys, time
+import time
 
-# Adding parent directory to import config.py
-current = os.path.dirname(os.path.realpath(__file__))
-parent = os.path.dirname(current)
-sys.path.append(parent)
-
+# Gives time for API request & database write to finish before trying to connect.
 time.sleep(10)
 
 st.set_page_config(page_title="Pumpkin Empire: a Pumpkin Spice Tweets Journey",
@@ -48,6 +44,8 @@ tweets['sentiment'] = tweets['polarity'].apply(lambda x: 'positive' if x > 0 els
 users = pd.read_sql("SELECT * FROM users", conn)
 users['acct_created'] = pd.to_datetime(users['acct_created'])
 mergedDF = pd.merge(tweets, users, how="left", left_on="author_id", right_on="user_id")
+
+print(tweets.loc[tweets['polarity'] < 0])
 
 
 ######  Setting up the analysis  #####

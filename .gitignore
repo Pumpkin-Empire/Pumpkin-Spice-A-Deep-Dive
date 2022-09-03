@@ -16,3 +16,5 @@ __pycache__/
 postgres-data/
 notes.md
 .streamlit/secrets.toml
+
+aconfig.py
