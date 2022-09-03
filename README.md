@@ -1,4 +1,4 @@
-# <p style="text-align: center;">Pumpkin-Empire:</p>
+# <p align="center">Pumpkin-Empire:</p>
 ### A reproducible, modular data pipeline with automatic analytics using Twitter API, Postgres, Streamlit, and Docker
 ***
 
@@ -60,7 +60,7 @@ search='pumpkin spice'
 First open Docker Dashboard on your computer. 
 
 
->**Note:**If you would like to build a database on a search for something other than 'pumpkin spice', update 'search' in the app/config.py file made earlier. Reference for making a query can be found here:
+> **Note:** If you would like to build a database on a search for something other than 'pumpkin spice', update 'search' in the app/config.py file made earlier. Reference for making a query can be found here:
 > [Building queries for searching Tweets](https://developer.twitter.com/en/docs/twitter-api/tweets/search/integrate/build-a-query)
 
 **First Pipeline**
@@ -73,15 +73,17 @@ docker-compose up -d
 ```
 ![docker-compose up -d](/static/initialcompose.png)
 
->**Note:** To give this pipeline a different name than the default use:
+> **Note:** To give this pipeline a different name than the default use:
 >
 >```
 >docker-compose -p <name> up -d
 >```
 >
 >Replace \<name> with a name of your choosing.
+>
 >***
->**Note:**The first time you run docker-compose will take awhile. This is due to Docker downloading the requirements for each image. Subsequent pipelines will compose much faster.
+>
+> **Note:** The first time you run docker-compose will take awhile. This is due to Docker downloading the requirements for each image. Subsequent pipelines will compose much faster.
 
 With that, your pipeline is running. 
 
