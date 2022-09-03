@@ -1,4 +1,5 @@
-# Pumpkin-Empire: A data pipeline using Twitter API, Postgres, Jupyter Notebook, Pandas, and Docker
+# <p style="text-align: center;">Pumpkin-Empire:</p>
+### A reproducible, modular data pipeline with automatic analytics using Twitter API, Postgres, Streamlit, and Docker
 ***
 
 ## About
@@ -15,15 +16,15 @@ Pumpkin Spice season is no longer relegated to Autumn. Twitter has something to 
 - Data Engineering
 - ETL (Extract, Transform, Load)
 - REST APIs
-- Python scripts
+- Python Scripts
 - SQL & PostgreSQL
 - Docker Containerization
+- Streamlit
 - Jupyter Notebooks
-- Pandas
 - Data Analysis
 
 ## Prerequisites
-- Docker (with CLI & Docker-Compose)
+- Docker (with CLI tools & Docker-Compose)
 
 ## Set-up
 -  Download or pull this repository to your desired location.
@@ -45,13 +46,6 @@ bearer_token = "<your bearer token>"
 
 # Search
 search='pumpkin spice'
-
-# postgres connection
-hostname='database'
-port='5432'
-dbname='database'
-uname='postgres'
-pwd='docker'
 ```
 ***
 ## Starting the Pipeline
@@ -68,6 +62,11 @@ The first query you wish to make a pipeline for is simple to get started. Naviga
 docker-compose up -d
 ```
 ![docker-compose up -d](/static/initialcompose.png)
+
+>**Note:** To give this pipeline a different name than the default use
+>```
+>docker-compose -p <name> up -d
+>```
 
 From here there are a few things that can be looked at:
 
@@ -96,10 +95,10 @@ To check if your database has been populated, open a browser and enter ```localh
 Login info:
 
 ```
-server 		database
-username 	postgres
-password 	docker
-database 	database
+server  : 	database
+username: 	postgres
+password: 	docker
+database: 	database
 
 ```
 
@@ -107,29 +106,38 @@ The database page shows us the tables that were created. Either can be selected 
 
 ![adminer tables](/static/adminertables.png)
 
-#ANALYSIS INSTRUCTIONS HERE
+**Analysis**
+
+Analysis of the database is done automatically by the analysis container. It utilizes streamlit and is available for viewing in your browser by navigating to: ```localhost:8501```
+
+![streamlit analysis](/static/streamlit.png)
+
 
 **Creating Another Pipeline**
 
 
 To create another pipeline using another search string is easy.
 
-First, be sure to stop any running containers in the first pipeline. The new one will use the same ports, so it cannot run concurrently. You can do this by clicking the project in the Docker dashboard, then pressing the stop button for any running processes.
+First, be sure to stop any running containers in the first pipeline. The new one will use the same ports, so it cannot run concurrently. You can do this by clicking the project in the Docker dashboard, then pressing the stop button for any running containers.
 
 ![Docker stop](/static/dockerstop.png)
 
-Open config.py and update the search to a string of your choosing (comparison operators and 'AND' will throw errors, so please refer to the early query building link on how to implement them).
+Open config.py and update the search to a string of your choosing (comparison operators and 'AND' will throw errors, so please refer to the query building link earlier in this README for infomration on how to implement them).
 
 ![other search](/static/othersearch.png)
 
 Then, from the command line in the project's main folder enter the following command: 
 ```docker-compose -p <name> up --build -d```
 
-> **Note:** not designating a name with the -p flag will overwrite the original pipeline.
+> **Note:** Not designating a name with the -p flag will overwrite the original pipeline.
 
 Replace \<name> with a name of your choosing for the new image.
 
 After the image builds, it will be viewable in the Docker dashboard, and have available to it all the same features of the first pipeline.
 
 ![Multiple pipelines](/static/multiplepipelines.png)
+
+> **Note:** To restart another pipeline: First, stop the containers in the one currently running. Then, on Docker Dashboard's Containers tab, hit the play button on the pipeline you wish to continue working with.
+
+## Learning Resources
 

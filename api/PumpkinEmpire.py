@@ -92,8 +92,11 @@ def loop_connect(next_token) -> tuple:
     requests_per_call = max_requests_per_window - max_requests_per_call
     while requests_per_call > 0:
         url = create_url(requests_per_call)
-        temp_response = connect_to_api(url[0], headers, url[1], json_response['meta']['next_token'])
-        next_token = json_response['meta']['next_token']
+        try:
+            next_token = json_response['meta']['next_token']
+        except KeyError:
+            next_token = None
+        temp_response = connect_to_api(url[0], headers, url[1], next_token)
         json_response = append_dict_values(json_response, temp_response)
         requests_per_call = requests_per_call - max_requests_per_call
     return json_response, next_token
