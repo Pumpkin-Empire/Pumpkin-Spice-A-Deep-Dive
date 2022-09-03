@@ -8,7 +8,7 @@ node_modules
 # Ignore SASS config files
 .sass-cache
 # Ignore API config file
-app/config.py
+analysis/config.py
 config.py
 __pycache__/
 

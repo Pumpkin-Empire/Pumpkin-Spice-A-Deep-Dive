@@ -1,9 +1,7 @@
 import numpy as np
+import db_con
 import streamlit as st
 import pandas as pd
-#from sqlalchemy import create_engine ## old sql alchemy connection
-#from sqlalchemy.orm import sessionmaker
-import config
 import plotly.express as px
 import matplotlib.pyplot as plt
 import re as re
@@ -11,6 +9,14 @@ import seaborn as sns
 import psycopg2
 from textblob import TextBlob
 from utils import get_most_hashtags, get_most_mentions, show_wordcloud
+import os, sys, time
+
+# Adding parent directory to import config.py
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+
+time.sleep(10)
 
 st.set_page_config(page_title="Pumpkin Empire: a Pumpkin Spice Tweets Journey",
                    layout='wide')
@@ -18,7 +24,15 @@ st.set_page_config(page_title="Pumpkin Empire: a Pumpkin Spice Tweets Journey",
 ### data load here, initialize connection ###
 @st.experimental_singleton
 def init_connection():
-    return psycopg2.connect(**st.secrets["postgres"])
+    return psycopg2.connect(
+        host=db_con.hostname,
+        port=db_con.port,
+        database=db_con.dbname,
+        user=db_con.uname,
+        password=db_con.pwd
+    )
+
+
 
 conn = init_connection()
 
@@ -36,7 +50,7 @@ users['acct_created'] = pd.to_datetime(users['acct_created'])
 mergedDF = pd.merge(tweets, users, how="left", left_on="author_id", right_on="user_id")
 
 
-######  Setting up the app  #####
+######  Setting up the analysis  #####
 
 st.markdown("<h1 style='text-align: center; color: black; '>Pumpkin Empire: a Pumpkin Spice Tweets Journey</h1>", unsafe_allow_html=True)
 

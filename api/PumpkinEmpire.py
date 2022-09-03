@@ -1,10 +1,16 @@
-import sys
-import requests
+import os, sys
 import config
+import requests
+import db_con
 from datetime import datetime, timedelta, date
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import *
+
+# Adding parent directory to import config.py
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
 
 
 def get_date_string() -> str:
@@ -74,8 +80,8 @@ def loop_connect() -> dict:
 
     Returns: All responses appended to a single dict."""
     # May be able to make these global, depending on the automation used later.
-    max_requests_per_call = 100
-    max_requests_per_window = 180
+    max_requests_per_call = 10
+    max_requests_per_window = 20
 
     # Create URL for response
     bearer_token = config.bearer_token
@@ -143,27 +149,27 @@ def add_users_to_db(twitter_response: dict):
 
 if __name__ == "__main__":
     try:
-        hostname = config.hostname
+        hostname = db_con.hostname
     except AttributeError:
         print('Please configure config.py, hostname')
         sys.exit()
     try:
-        dbname = config.dbname
+        dbname = db_con.dbname
     except AttributeError:
         print('Please configure config.py, dbname')
         sys.exit()
     try:
-        uname = config.uname
+        uname = db_con.uname
     except AttributeError:
         print('Please configure config.py, uname')
         sys.exit()
     try:
-        pwd = config.pwd
+        pwd = db_con.pwd
     except AttributeError:
         print('Please configure config.py, pwd')
         sys.exit()
     try:
-        port = config.port
+        port = db_con.port
     except AttributeError:
         print('Please configure config.py, port')
         sys.exit()

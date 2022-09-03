@@ -1,7 +1,6 @@
 import numpy as np
 import streamlit as st
 import pandas as pd
-import config
 import plotly.express as px
 import matplotlib.pyplot as plt
 import re as re
@@ -13,7 +12,17 @@ from nltk.tokenize.api import TokenizerI
 from sklearn import model_selection
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_distances
+import os, sys
 from nltk.corpus import stopwords
+# Adding parent directory to import config.py
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+import config
+
+nltk.download('stopwords')
+
+
 
 
 

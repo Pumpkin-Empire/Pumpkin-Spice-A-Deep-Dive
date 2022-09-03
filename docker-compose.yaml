@@ -19,6 +19,7 @@
 services:
   database:
     image: postgres
+    hostname: database
     ports:
       - 5432:5432
     restart: always
@@ -36,7 +37,11 @@ services:
       - database
     ports:
       - 8080:8080
-  app :
-    build: ./app/
+  api :
+    build: ./api/
     depends_on:
       - database
+  analysis :
+    build: ./analysis/
+    ports:
+      - 8501:8501
