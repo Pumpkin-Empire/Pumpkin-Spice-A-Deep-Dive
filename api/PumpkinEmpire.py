@@ -112,7 +112,7 @@ def connect_loop():
         engine = create_engine("postgresql://{user}:{pw}@{host}:{port}/{db}".format
                                (host=hostname, port=port, db=dbname, user=uname, pw=pwd),
                                pool_size=20, max_overflow=0)
-        print("Database connection opened", flush=True)
+        print("Database connection opened.", flush=True)
         # local engine
         # engine = create_engine("postgresql://{user}:{pw}@{host}/{db}".format(
         #     host=hostname, db=dbname, user=uname, pw=pwd), pool_size=20,
@@ -124,10 +124,10 @@ def connect_loop():
 
         # End postgres connection
         engine.dispose()
-        print("Database connection closed", flush=True)
+        print("Database connection closed.", flush=True)
 
         # Wait ~15min for next request
-        print("\nWaiting 15 minutes until next request\n", flush=True)
+        print("\nWaiting 15 minutes until next request.\n", flush=True)
         time.sleep(900)
 
 
@@ -175,35 +175,35 @@ def add_users_to_db(twitter_response: dict, engine):
 
             session.add(user)
             session.commit()
-    print("Successfully wrote users to database", flush=True)
+    print("Successfully wrote users to database.", flush=True)
 
 
 if __name__ == "__main__":
-    print("Attempting to get configuration from config.py")
+    print("Attempting to get configuration from config.py.")
     try:
         hostname = db_con.hostname
     except AttributeError:
-        print('Please configure config.py, hostname')
+        print('Please configure config.py, hostname.')
         sys.exit()
     try:
         dbname = db_con.dbname
     except AttributeError:
-        print('Please configure config.py, dbname')
+        print('Please configure config.py, dbname.')
         sys.exit()
     try:
         uname = db_con.uname
     except AttributeError:
-        print('Please configure config.py, uname')
+        print('Please configure config.py, uname.')
         sys.exit()
     try:
         pwd = db_con.pwd
     except AttributeError:
-        print('Please configure config.py, pwd')
+        print('Please configure config.py, pwd.')
         sys.exit()
     try:
         port = db_con.port
     except AttributeError:
-        print('Please configure config.py, port')
+        print('Please configure config.py, port.')
         sys.exit()
     try:
         search = config.search
