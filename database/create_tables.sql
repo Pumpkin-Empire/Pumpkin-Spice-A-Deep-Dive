@@ -8,6 +8,7 @@ quote_count int,
 reply_count int,
 retweet_count int,
 date date,
+topic text,
 PRIMARY KEY(tweet_id)
 );
 

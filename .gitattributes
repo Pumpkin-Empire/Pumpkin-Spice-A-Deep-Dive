@@ -1,0 +1,8 @@
+# To fix language stats on github
+Jupyter notebook
+
+For text count
+*.ipynb  text
+
+To ignore it use below
+*.ipynb linguist-documentation

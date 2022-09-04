@@ -13,8 +13,11 @@ from nltk.tokenize.api import TokenizerI
 from sklearn import model_selection
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_distances
+
 from nltk.corpus import stopwords
 
+
+nltk.download('stopwords')
 
 
 def get_most_hashtags(data):
@@ -47,6 +50,7 @@ def get_most_hashtags(data):
     plt.tight_layout(pad=3)
     return fig
 
+
 def get_most_mentions(data):
     ####mentions data for most mentions chart####
     mentions = []
@@ -76,11 +80,6 @@ def get_most_mentions(data):
     ax.set_title("Most Frequently Mentioned Accounts", fontsize=20)
     return fig
 
-# def user_acct_date(data):
-#
-#     fig, ax = plt.subplots()
-#     ax.bar(data.groupby(data.acct_created.dt.year).size(), data['acct_created'], color=sns.color_palette('rocket_r'), edgecolor='black', linewidth=1)
-#     return fig
 
 def show_wordcloud(data):
 

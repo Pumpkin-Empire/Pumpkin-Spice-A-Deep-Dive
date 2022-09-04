@@ -1,9 +1,7 @@
 import numpy as np
+import db_con
 import streamlit as st
 import pandas as pd
-#from sqlalchemy import create_engine ## old sql alchemy connection
-#from sqlalchemy.orm import sessionmaker
-import config
 import plotly.express as px
 import matplotlib.pyplot as plt
 import re as re
@@ -11,6 +9,10 @@ import seaborn as sns
 import psycopg2
 from textblob import TextBlob
 from utils import get_most_hashtags, get_most_mentions, show_wordcloud
+import time
+
+# Gives time for API request & database write to finish before trying to connect.
+time.sleep(10)
 
 st.set_page_config(page_title="Pumpkin Empire: a Pumpkin Spice Tweets Journey",
                    layout='wide')
@@ -18,7 +20,15 @@ st.set_page_config(page_title="Pumpkin Empire: a Pumpkin Spice Tweets Journey",
 ### data load here, initialize connection ###
 @st.experimental_singleton
 def init_connection():
-    return psycopg2.connect(**st.secrets["postgres"])
+    return psycopg2.connect(
+        host=db_con.hostname,
+        port=db_con.port,
+        database=db_con.dbname,
+        user=db_con.uname,
+        password=db_con.pwd
+    )
+
+
 
 conn = init_connection()
 
@@ -38,6 +48,11 @@ user_stack = mergedDF.groupby(mergedDF.acct_created.dt.year)['sentiment'].value_
 
 
 ######  Setting up the app  #####
+
+print(tweets.loc[tweets['polarity'] < 0])
+
+
+######  Setting up the analysis  #####
 
 st.markdown("<h1 style='text-align: center; color: black; '>Pumpkin Empire: a Pumpkin Spice Tweets Journey</h1>", unsafe_allow_html=True)
 
