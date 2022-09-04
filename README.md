@@ -120,7 +120,7 @@ The database page shows us the tables that were created. Either can be selected 
 
 Adminer features a GUI for executing SQL queries. It was mainly used in this project for debugging and ease of access to our database.
 
-**Stremlit Analysis**
+**Streamlit Analysis**
 
 Analysis of the database is done automatically by the analysis container. It utilizes Streamlit and is available for viewing in your browser by navigating to:  ```localhost:8501```
 
@@ -141,6 +141,7 @@ Open config.py and update the search to a string of your choosing.
 ![other search](/static/othersearch.png)
 
 Then, from the command line in the project's main folder enter the following command: 
+
 ```docker-compose -p <name> up --build -d```
 
 > **Note:** Not designating a name with the -p flag will overwrite the original pipeline if no -p flag was used for the first pipeline.
