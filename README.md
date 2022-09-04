@@ -93,7 +93,7 @@ Clicking on the running container shows the processes individually.
 
 ![docker containers](/static/dockercontainers.png)
 
-> **Note:** If only 3/4 containers are running, it is likely the api container failed to connect to either the internet or the database. On the containers screen, you can pres the 'play' button to restart the service.
+> **Note:** If only 3/4 containers are running, it is likely the api service failed to connect to either the internet or the database. On the containers screen, you can press the 'play' button to restart the service.
 
 
 We can check the result of the API request and writing to postgres by clicking on the container ending in 'api 1'.
