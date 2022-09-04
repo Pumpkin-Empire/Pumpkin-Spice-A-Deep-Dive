@@ -82,6 +82,7 @@ docker-compose up -d
 
 With that, your pipeline is running. 
 
+
 **Docker Dashboard**
 
 On the containers tab the pipeline can be seen. 4/4 containers should be running. Once the API request has been completed and written to the database, it waits fifteen minutes before making another request (due to limitations of Twitter's free API access).
@@ -91,6 +92,9 @@ On the containers tab the pipeline can be seen. 4/4 containers should be running
 Clicking on the running container shows the processes individually.
 
 ![docker containers](/static/dockercontainers.png)
+
+> **Note:** If only 3/4 containers are running, it is likely the api service failed to connect to either the internet or the database. On the containers screen, you can press the 'play' button to restart the service.
+
 
 We can check the result of the API request and writing to postgres by clicking on the container ending in 'api 1'.
 
