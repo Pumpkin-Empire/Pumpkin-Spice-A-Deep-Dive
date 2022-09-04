@@ -79,6 +79,7 @@ with col2:
     st.table(usertweets.count()['tweet_text'].sort_values(ascending=False)[:6])
     st.markdown("#### Count of Account Creation Year")
     # st.pyplot(user_acct_date(users))
+    st.bar_chart(data=users.groupby(users.acct_created.dt.year).size(), y= 1200, use_container_width=True)
     st.expander("Account Created Date Data")
     st.write(users.groupby(users.acct_created.dt.year).size())
 
