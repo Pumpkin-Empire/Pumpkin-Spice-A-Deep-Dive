@@ -1,7 +1,6 @@
 import sys
 import requests
-from app import config
-import config
+from api import config
 # import pandas as pd
 from datetime import datetime, timedelta, date
 from sqlalchemy import create_engine

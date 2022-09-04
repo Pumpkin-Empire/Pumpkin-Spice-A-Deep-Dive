@@ -65,6 +65,7 @@ with col1:
     # create pie chart
     fig = plt.figure()
     plt.pie(len_data, labels=item_data, colors=colors, autopct='%.0f%%', textprops={'fontsize': 14})
+    plt.axis('equal')
 
     st.pyplot(fig)
 
@@ -77,6 +78,8 @@ with col2:
     st.markdown("**Top Accounts by PS Tweets**")
     st.table(usertweets.count()['tweet_text'].sort_values(ascending=False)[:6])
     st.markdown("#### Count of Account Creation Year")
+    # st.pyplot(user_acct_date(users))
+    st.expander("Account Created Date Data")
     st.write(users.groupby(users.acct_created.dt.year).size())
 
 with col3:

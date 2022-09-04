@@ -76,6 +76,12 @@ def get_most_mentions(data):
     ax.set_title("Most Frequently Mentioned Accounts", fontsize=20)
     return fig
 
+# def user_acct_date(data):
+#
+#     fig, ax = plt.subplots()
+#     ax.bar(data.groupby(data.acct_created.dt.year).size(), data['acct_created'], color=sns.color_palette('rocket_r'), edgecolor='black', linewidth=1)
+#     return fig
+
 def show_wordcloud(data):
 
     stopword = stopwords.words('english')
