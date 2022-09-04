@@ -82,6 +82,7 @@ def loop_connect(next_token) -> tuple:
     per call and requests per window are based on free use of Twitter's API.
 
     Returns: All responses appended to a single dict."""
+    # May be able to make these global, depending on the automation used later.
     max_requests_per_call = 100
     max_requests_per_window = 180
 
