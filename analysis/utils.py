@@ -106,7 +106,7 @@ def show_wordcloud(data):
     plt.axis('off')
     plt.imshow(wordcloud, interpolation= 'bilinear')
     plt.axis('off')
-    plt.show()
+    return fig
 
 
 

@@ -88,6 +88,7 @@ with st.container():
         plt.axis('equal')
 
         st.pyplot(fig)
+        plt.cla()
 
         tweet_sentiment = tweets.groupby(tweets['sentiment']).size().reset_index(name='Count')
         hide_table_row_index  = """
@@ -120,6 +121,7 @@ with st.container():
         st.pyplot(plt.show(), user_container_width=True)
         with st.expander('User Account Created Year'):
             st.write(users.groupby(users.acct_created.dt.year).size())
+        plt.cla()
 
 
 with st.container():
@@ -137,18 +139,21 @@ with st.expander("Word Cloud"):
     with col1:
         st.subheader("Positive")
         temp_df = tweets.loc[tweets['sentiment'] == 'positive']
-        st.pyplot(show_wordcloud(temp_df['tweet_text']))
-
+        pos_fig = show_wordcloud(temp_df['tweet_text'])
+        st.pyplot(pos_fig)
+        plt.cla()
 
     with col2:
         st.subheader("Negative")
         temp_df = tweets.loc[tweets['sentiment'] == 'negative']
         st.pyplot(show_wordcloud(temp_df['tweet_text']))
+        plt.cla()
 
     with col3:
         st.subheader("Neutral")
         temp_df = tweets.loc[tweets['sentiment'] == 'neutral']
         st.pyplot(show_wordcloud(temp_df['tweet_text']))
+        plt.cla()
 
 
 if st.checkbox('Show raw data'):
