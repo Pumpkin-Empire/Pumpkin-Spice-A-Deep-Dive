@@ -136,16 +136,19 @@ with st.expander("Word Cloud"):
 
     with col1:
         st.subheader("Positive")
-        st.pyplot(show_wordcloud(tweets.loc[tweets['sentiment'] == 'positive']))
+        temp_df = tweets.loc[tweets['sentiment'] == 'positive']
+        st.pyplot(show_wordcloud(temp_df['tweet_text']))
 
 
     with col2:
         st.subheader("Negative")
-        st.pyplot(show_wordcloud(tweets.loc[tweets['sentiment'] == 'negative']))
+        temp_df = tweets.loc[tweets['sentiment'] == 'negative']
+        st.pyplot(show_wordcloud(temp_df['tweet_text']))
 
     with col3:
         st.subheader("Neutral")
-        st.pyplot(show_wordcloud(tweets.loc[tweets['sentiment'] == 'neutral']))
+        temp_df = tweets.loc[tweets['sentiment'] == 'neutral']
+        st.pyplot(show_wordcloud(temp_df['tweet_text']))
 
 
 if st.checkbox('Show raw data'):

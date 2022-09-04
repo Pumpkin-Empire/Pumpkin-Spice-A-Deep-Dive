@@ -102,7 +102,8 @@ def show_wordcloud(data):
         scale=3,
         random_state=1
     ).generate(str(data))
-
+    fig = plt.figure(1, figsize=(12, 12))
+    plt.axis('off')
     plt.imshow(wordcloud, interpolation= 'bilinear')
     plt.axis('off')
     plt.show()
