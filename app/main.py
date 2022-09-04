@@ -46,7 +46,8 @@ st.markdown("<h1 style='text-align: center; color: black; '>Pumpkin Empire: a Pu
 # st.image(title_image)
 
 st.markdown("<h3 style='text-align: center; color:grey;'>Exploring the polarizing topic of Pumpkin Spice, one tweet at a time</h3>", unsafe_allow_html=True)
-st.markdown(" ")
+vert_space = '<div style="padding: 30px 5px;"></div>'
+st.markdown(vert_space, unsafe_allow_html=True)
 
 
 col1, col2, col3 = st.columns([1, 1, 2])
@@ -73,15 +74,23 @@ with st.container():
 
         st.pyplot(fig)
 
-        tweet_sentiment = tweets.groupby(tweets['sentiment'])
-        st.table(data=tweet_sentiment.size())
+        tweet_sentiment = tweets.groupby(tweets['sentiment']).size().reset_index(name='Count')
+        hide_table_row_index  = """
+                <style>
+                thead tr th:first-child {display:none}
+                tbody th {display:none}
+                </style>
+                """
+        st.markdown(hide_table_row_index, unsafe_allow_html=True)
+        st.table(tweet_sentiment)
 
     with col2:
         st.subheader("There are {} unique accounts tweeting".format(users['username'].nunique()))
         st.markdown('')
-        usertweets = mergedDF.groupby('username')
-        st.markdown("**Top Accounts by PS Tweets**")
-        st.table(usertweets.count()['tweet_text'].sort_values(ascending=False)[:6])
+        usertweets = mergedDF.groupby('username').count()['tweet_text'].sort_values(ascending=False).reset_index(name="Tweet Count")
+        # tweet_sentiment = tweets.groupby(tweets['sentiment']).size().reset_index(name='Count')
+        st.markdown("#### Top 10 Accounts by Tweet Count")
+        st.table(usertweets[:10])
 
 
     with col3:
@@ -94,8 +103,8 @@ with st.container():
         plt.xlabel('Year Account Created')
         plt.legend(bbox_to_anchor=(1.05, 1))
         st.pyplot(plt.show(), user_container_width=True)
-
-        st.write(users.groupby(users.acct_created.dt.year).size())
+        with st.expander('User Account Created Year'):
+            st.write(users.groupby(users.acct_created.dt.year).size())
 
 
 with st.container():
