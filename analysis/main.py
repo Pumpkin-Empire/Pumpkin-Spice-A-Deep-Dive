@@ -14,7 +14,7 @@ import time
 # Gives time for API request & database write to finish before trying to connect.
 time.sleep(10)
 
-st.set_page_config(page_title="Pumpkin Empire: a Pumpkin Spice Tweets Journey",
+st.set_page_config(page_title="Tweets Analysis Search Words",
                    layout='wide')
 
 ### data load here, initialize connection ###
@@ -64,12 +64,22 @@ st.markdown("<h3 style='text-align: center; color:grey;'>Exploring the polarizin
 vert_space = '<div style="padding: 30px 5px;"></div>'
 st.markdown(vert_space, unsafe_allow_html=True)
 
+col1, col2, col3 = st.columns([1,2,1])
+with col1:
+    st.markdown(' ')
+with col2:
+    search_term = st.text_input('Type Word to Search Here')
+    tempdf = tweets[tweets["tweet_text"].str.contains(search_term)]
+    st.write(f'You searched for {search_term}. There are {len(tempdf)} tweets containing {search_term}')
+with col3:
+    st.markdown(' ')
 
-col1, col2, col3 = st.columns([1, 1, 2])
-col4, col5 = st.columns(2)
+
+col4, col5, col6 = st.columns([1, 1, 2])
+col7, col8 = st.columns(2)
 
 with st.container():
-    with col1:
+    with col4:
         st.subheader("There are {} total tweets".format(tweets.shape[0]))
         st.markdown(' ')
         RT_tweets = tweets[tweets['RT'] == True]
@@ -99,7 +109,7 @@ with st.container():
         st.markdown(hide_table_row_index, unsafe_allow_html=True)
         st.table(tweet_sentiment)
 
-    with col2:
+    with col5:
         st.subheader("There are {} unique accounts tweeting".format(users['username'].nunique()))
         st.markdown('')
         usertweets = mergedDF.groupby('username').count()['tweet_text'].sort_values(ascending=False).reset_index(name="Tweet Count")
@@ -108,7 +118,7 @@ with st.container():
         st.table(usertweets[:10])
 
 
-    with col3:
+    with col6:
         st.markdown("<h3 style='text-align: center; color:black;'>Account Creation Date and Sentiment</h3>", unsafe_allow_html=True)
         # st.bar_chart(data=users.groupby(users.acct_created.dt.year).size(), y=1500, use_container_width=True)
         ###User account creation chart by sentiment#####
@@ -123,10 +133,10 @@ with st.container():
 
 
 with st.container():
-    with col4:
+    with col7:
 #### most hashtags chart ###
         st.pyplot(get_most_hashtags(tweets))
-    with col5:
+    with col8:
 #### most mentions chart ###
         st.pyplot(get_most_mentions(tweets))
 
