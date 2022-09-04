@@ -34,6 +34,7 @@ tweets['sentiment'] = tweets['polarity'].apply(lambda x: 'positive' if x > 0 els
 users = pd.read_sql("SELECT * FROM users", conn)
 users['acct_created'] = pd.to_datetime(users['acct_created'])
 mergedDF = pd.merge(tweets, users, how="left", left_on="author_id", right_on="user_id")
+user_stack = mergedDF.groupby(mergedDF.acct_created.dt.year)['sentiment'].value_counts()
 
 
 ######  Setting up the app  #####
@@ -49,45 +50,61 @@ st.markdown(" ")
 
 
 col1, col2, col3 = st.columns([1, 1, 2])
+col4, col5 = st.columns(2)
 
-with col1:
-    st.subheader("There are {} total tweets".format(tweets.shape[0]))
-    RT_tweets = tweets[tweets['RT'] == True]
-    reply_tweets = tweets[tweets['Reply'] == True]
-    mention_tweets = tweets[(tweets['RT'] == False) & (tweets['Reply'] == False) & (tweets['tweet_text'].str.contains('@'))]
-    plain_text_tweets = tweets[~tweets['tweet_text'].str.contains("@") & ~tweets['tweet_text'].str.contains("RT")]
+with st.container():
+    with col1:
+        st.subheader("There are {} total tweets".format(tweets.shape[0]))
+        st.markdown(' ')
+        RT_tweets = tweets[tweets['RT'] == True]
+        reply_tweets = tweets[tweets['Reply'] == True]
+        mention_tweets = tweets[(tweets['RT'] == False) & (tweets['Reply'] == False) & (tweets['tweet_text'].str.contains('@'))]
+        plain_text_tweets = tweets[~tweets['tweet_text'].str.contains("@") & ~tweets['tweet_text'].str.contains("RT")]
 
-    len_data = [len(RT_tweets) / len(tweets), len(mention_tweets) / len(tweets), len(reply_tweets) / len(tweets),
-                len(plain_text_tweets) / len(tweets)]
-    item_data = ['Retweets', 'Mentions', 'Replies', 'Original Tweets']
-    # define Seaborn color palette to use
-    colors = sns.color_palette('rocket_r')[0:4]
-    # create pie chart
-    fig = plt.figure()
-    plt.pie(len_data, labels=item_data, colors=colors, autopct='%.0f%%', textprops={'fontsize': 14})
-    plt.axis('equal')
+        len_data = [len(RT_tweets) / len(tweets), len(mention_tweets) / len(tweets), len(reply_tweets) / len(tweets),
+                    len(plain_text_tweets) / len(tweets)]
+        item_data = ['Retweets', 'Mentions', 'Replies', 'Original Tweets']
+        # define Seaborn color palette to use
+        colors = sns.color_palette('rocket_r')[0:4]
+        # create pie chart
+        fig = plt.figure()
+        plt.pie(len_data, labels=item_data, colors=colors, autopct='%.0f%%', textprops={'fontsize': 14})
+        plt.axis('equal')
 
-    st.pyplot(fig)
+        st.pyplot(fig)
 
-    tweet_sentiment = tweets.groupby(tweets['sentiment'])
-    st.table(tweet_sentiment.size())
+        tweet_sentiment = tweets.groupby(tweets['sentiment'])
+        st.table(data=tweet_sentiment.size())
 
-with col2:
-    st.subheader("There are {} different users".format(users['username'].nunique()))
-    usertweets = mergedDF.groupby('username')
-    st.markdown("**Top Accounts by PS Tweets**")
-    st.table(usertweets.count()['tweet_text'].sort_values(ascending=False)[:6])
-    st.markdown("#### Count of Account Creation Year")
-    # st.pyplot(user_acct_date(users))
-    st.bar_chart(data=users.groupby(users.acct_created.dt.year).size(), y= 1200, use_container_width=True)
-    st.expander("Account Created Date Data")
-    st.write(users.groupby(users.acct_created.dt.year).size())
+    with col2:
+        st.subheader("There are {} unique accounts tweeting".format(users['username'].nunique()))
+        st.markdown('')
+        usertweets = mergedDF.groupby('username')
+        st.markdown("**Top Accounts by PS Tweets**")
+        st.table(usertweets.count()['tweet_text'].sort_values(ascending=False)[:6])
 
-with col3:
+
+    with col3:
+        st.markdown("<h3 style='text-align: center; color:black;'>Account Creation Date and Sentiment</h3>", unsafe_allow_html=True)
+        # st.bar_chart(data=users.groupby(users.acct_created.dt.year).size(), y=1500, use_container_width=True)
+        ###User account creation chart by sentiment#####
+        color_pallette = sns.color_palette("Spectral")
+        user_stack_chart = user_stack.unstack()
+        user_stack_chart.plot.bar(stacked=True, color=color_pallette)
+        plt.xlabel('Year Account Created')
+        plt.legend(bbox_to_anchor=(1.05, 1))
+        st.pyplot(plt.show(), user_container_width=True)
+
+        st.write(users.groupby(users.acct_created.dt.year).size())
+
+
+with st.container():
+    with col4:
 #### most hashtags chart ###
-    st.pyplot(get_most_hashtags(tweets))
+        st.pyplot(get_most_hashtags(tweets))
+    with col5:
 #### most mentions chart ###
-    st.pyplot(get_most_mentions(tweets))
+        st.pyplot(get_most_mentions(tweets))
 
 with st.expander("Word Cloud"):
 
@@ -110,4 +127,5 @@ with st.expander("Word Cloud"):
 if st.checkbox('Show raw data'):
     st.subheader('Raw data')
     st.write(tweets)
+
 
