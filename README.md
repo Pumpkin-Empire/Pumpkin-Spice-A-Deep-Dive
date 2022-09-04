@@ -24,22 +24,18 @@ Pumpkin Spice season is no longer relegated to Autumn. Twitter has something to 
 - Data Analysis
 
 ## Prerequisites
-- Docker (with CLI tools & Docker-Compose)
+- [Docker](https://docs.docker.com/desktop/install/mac-install/)
+- [Twitter API Access](https://developer.twitter.com/en/docs/twitter-api/getting-started/getting-access-to-the-twitter-api)
 
 ## Set-up
--  Download or pull this repository to your desired location.
--  Get Twitter API access keys & tokens (total of 5) [Twitter API](https://developer.twitter.com/en/docs/twitter-api/getting-started/getting-access-to-the-twitter-api)
-- Create a file called 'config.py' in the app/ folder of this project. This file will hold your Twitter API access information and postgres connection. The only fields that need to be filled out are: 
 
-	- consumer\_key
-	- consumer\_secret 
-	- access\_token 
-	- access\_token\_secret 
-	- bearer\_token
+Download or pull this repository to your desired location.
 
-	
 
->config.py
+Create a file called 'config.py' in the app/ folder of this project. This file will hold your Twitter API access information.
+
+Copy the text in the box below to your config.py file and fill out the required fields.
+
 
 ```
 # Twitter API Access
@@ -53,15 +49,14 @@ bearer_token = "<your bearer token>"
 search='pumpkin spice'
 ```
 
+> **Note:** If you would like to build a database on a search for something other than 'pumpkin spice', update 'search'. Certain words like 'AND' and 'OR' function differently and will return an error if not formatted corectly. Reference for making a query can be found here:
+> [Building queries for searching Tweets](https://developer.twitter.com/en/docs/twitter-api/tweets/search/integrate/build-a-query)
 
 ***
 ## Starting the Pipeline
 
-First open Docker Dashboard on your computer. 
+First, open Docker Dashboard on your computer. 
 
-
-> **Note:** If you would like to build a database on a search for something other than 'pumpkin spice', update 'search' in the app/config.py file made earlier. Reference for making a query can be found here:
-> [Building queries for searching Tweets](https://developer.twitter.com/en/docs/twitter-api/tweets/search/integrate/build-a-query)
 
 **First Pipeline**
 ---
@@ -83,7 +78,7 @@ docker-compose up -d
 >
 >***
 >
-> **Note:** The first time you run docker-compose will take awhile. This is due to Docker downloading the requirements for each image. Subsequent pipelines will compose much faster.
+> **Note:** The first time you run docker-compose will take a while. This is due to Docker downloading the requirements for each image. Subsequent pipelines will compose much faster.
 
 With that, your pipeline is running. 
 
@@ -97,7 +92,7 @@ Clicking on the running container shows the processes individually.
 
 ![docker containers](/static/dockercontainers.png)
 
-We can check the result of the API request and writing to postgres by clicking on the container ending in 'api 1'. This is usually the 4th container in the list.
+We can check the result of the API request and writing to postgres by clicking on the container ending in 'api 1'.
 
 ![docker response](/static/dockerresponse.png)
 
@@ -107,7 +102,7 @@ Adminer is one of the containers inside our docker-compose. This allows us to vi
 
 To check if your database has been populated, open a browser and enter ```localhost:8080``` in the address bar.
 
-> **Note:**Be sure to change the dropdown box from MySQL to PostgreSQL.
+> **Note:** Be sure to change the dropdown box from MySQL to PostgreSQL.
 
 Login info:
 
@@ -141,14 +136,14 @@ First, be sure to stop any running containers in the first pipeline. The new one
 
 ![Docker stop](/static/dockerstop.png)
 
-Open config.py and update the search to a string of your choosing (comparison operators and 'AND' will throw errors, so please refer to the query building link earlier in this README for infomration on how to implement them).
+Open config.py and update the search to a string of your choosing. 
 
 ![other search](/static/othersearch.png)
 
 Then, from the command line in the project's main folder enter the following command: 
 ```docker-compose -p <name> up --build -d```
 
-> **Note:** Not designating a name with the -p flag will overwrite the original pipeline.
+> **Note:** Not designating a name with the -p flag will overwrite the original pipeline if no -p flag was used for the first pipeline.
 
 
 After the image builds, it will be viewable in the Docker dashboard, and have available to it all the same features of the first pipeline.

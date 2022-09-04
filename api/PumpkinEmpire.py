@@ -1,6 +1,8 @@
 import sys
+import psycopg2
 import requests
 import time
+import sqlalchemy.exc
 import db_con
 from datetime import datetime, timedelta, date
 from sqlalchemy import create_engine
@@ -14,14 +16,19 @@ def get_date_string() -> str:
     when searching for tweets from previous day. Formatted for Twitter API v2
     query:   '2022-08-23T00:01:00Z' """
     yesterday = date.today() - timedelta(days=1)
-    # today = datetime.today().strftime('%Y-%m-%d')
     current_time = datetime.now()
     time_and_formatting = 'T' + current_time.strftime("%H:%M:%S") + 'Z'
     return str(yesterday) + time_and_formatting
 
 
+def print_current_date_and_time():
+    """"Prints the current date & time"""
+    now = datetime.now()
+    print(now.strftime("%Y-%m-%d %H:%M:%S"))
+
+
 def auth():
-    """Get bearer token from """
+    """Get bearer token from config.py"""
     return config.bearer_token
 
 
@@ -75,7 +82,6 @@ def loop_connect(next_token) -> tuple:
     per call and requests per window are based on free use of Twitter's API.
 
     Returns: All responses appended to a single dict."""
-    # May be able to make these global, depending on the automation used later.
     max_requests_per_call = 100
     max_requests_per_window = 180
 
@@ -103,6 +109,9 @@ def loop_connect(next_token) -> tuple:
 
 
 def connect_loop():
+    """Continuously makes API requests on a fifteen-minute timer.
+    Closes when the Docker container is stopped."""
+    print_current_date_and_time()
 
     next_token = None
 
@@ -112,7 +121,13 @@ def connect_loop():
         engine = create_engine("postgresql://{user}:{pw}@{host}:{port}/{db}".format
                                (host=hostname, port=port, db=dbname, user=uname, pw=pwd),
                                pool_size=20, max_overflow=0)
-        print("Database connection opened", flush=True)
+        try:
+            engine.connect()
+            print("Database connection opened", flush=True)
+        except (psycopg2.OperationalError, sqlalchemy.exc.OperationalError):
+            print("OperationalError: Database not running. Please restart Docker "
+                  "containers")
+            break
         # local engine
         # engine = create_engine("postgresql://{user}:{pw}@{host}/{db}".format(
         #     host=hostname, db=dbname, user=uname, pw=pwd), pool_size=20,
@@ -171,7 +186,8 @@ def add_users_to_db(twitter_response: dict, engine):
             following_count = acct['public_metrics']['following_count']
             tweet_count = acct['public_metrics']['tweet_count']
             acct_date = acct['created_at']
-            user = User(user_id, username, location, follower_count, following_count, tweet_count, acct_date)
+            user = User(user_id, username, location, follower_count, following_count,
+                        tweet_count, acct_date)
 
             session.add(user)
             session.commit()
@@ -179,6 +195,9 @@ def add_users_to_db(twitter_response: dict, engine):
 
 
 if __name__ == "__main__":
+
+    # Get the user configuration
+    print_current_date_and_time()
     print("Attempting to get configuration from config.py")
     try:
         hostname = db_con.hostname
@@ -208,9 +227,10 @@ if __name__ == "__main__":
     try:
         search = config.search
     except AttributeError:
-        search = 'uhh'
+        search = 'pumpkin spice'
     print("Configuration set\n")
 
-    print("Beginning request cycle")
-
+    # Start the API request & database write loop.
+    print_current_date_and_time()
+    print("Beginning request cycle\n")
     connect_loop()
