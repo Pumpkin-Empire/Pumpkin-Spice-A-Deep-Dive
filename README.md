@@ -32,7 +32,7 @@ Pumpkin Spice season is no longer relegated to Autumn. Twitter has something to 
 Download or pull this repository to your desired location.
 
 
-Create a file called 'config.py' in the app/ folder of this project. This file will hold your Twitter API access information.
+Create a file called 'config.py' in the api/ folder of this project. This file will hold your Twitter API access information.
 
 Copy the text in the box below to your config.py file and fill out the required fields.
 
