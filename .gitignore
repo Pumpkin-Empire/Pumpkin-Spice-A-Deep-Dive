@@ -10,6 +10,7 @@ node_modules
 # Ignore API config file
 app/config.py
 config.py
+api/config.py
 
 __pycache__/
 postgres-data/
