@@ -145,6 +145,7 @@ def connect_loop():
 
         # Wait ~15min for next request
         print("\nWaiting 15 minutes until next request\n", flush=True)
+        print("*" * 60 + "\n", flush=True)
         time.sleep(900)
 
 
@@ -235,4 +236,5 @@ if __name__ == "__main__":
     # Start the API request & database write loop.
     print_current_date_and_time()
     print("Beginning request cycle\n")
+    print("*"*60 + "\n")
     connect_loop()
