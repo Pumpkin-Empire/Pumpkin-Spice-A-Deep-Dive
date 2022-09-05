@@ -70,6 +70,7 @@ with st.container():
         plt.axis('equal')
 
         st.pyplot(fig)
+        plt.cla()
 
         tweet_sentiment = tweets.groupby(tweets['sentiment']).size().reset_index(name='Count')
         hide_table_row_index  = """
@@ -105,6 +106,7 @@ with st.container():
         plt.xlabel('Year Account Created')
         plt.legend(bbox_to_anchor=(1.05, 1))
         st.pyplot(plt.show(), user_container_width=True)
+        plt.cla()
         with st.expander('User Account Created Year'):
             st.write(users.groupby(users.acct_created.dt.year).size())
 
@@ -116,6 +118,7 @@ with st.container():
     with col5:
 #### most mentions chart ###
         st.pyplot(get_most_mentions(tweets))
+        plt.cla()
 
 with st.expander("Word Cloud"):
 
@@ -123,16 +126,22 @@ with st.expander("Word Cloud"):
 
     with col1:
         st.subheader("Positive")
-        st.pyplot(show_wordcloud(tweets.loc[tweets['sentiment'] == 'positive']))
-
+        temp_df = tweets.loc[tweets['sentiment'] == 'positive']
+        pos_fig = show_wordcloud(temp_df['tweet_text'])
+        st.pyplot(pos_fig)
+        plt.cla()
 
     with col2:
         st.subheader("Negative")
-        st.pyplot(show_wordcloud(tweets.loc[tweets['sentiment'] == 'negative']))
+        temp_df = tweets.loc[tweets['sentiment'] == 'negative']
+        st.pyplot(show_wordcloud(temp_df['tweet_text']))
+        plt.cla()
 
     with col3:
         st.subheader("Neutral")
-        st.pyplot(show_wordcloud(tweets.loc[tweets['sentiment'] == 'neutral']))
+        temp_df = tweets.loc[tweets['sentiment'] == 'neutral']
+        st.pyplot(show_wordcloud(temp_df['tweet_text']))
+        plt.cla()
 
 
 if st.checkbox('Show raw data'):
