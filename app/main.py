@@ -78,8 +78,13 @@ with st.container():
                 tbody th {display:none}
                 </style>
                 """
+        st.markdown('**Tweet Count by Sentiment**')
         st.markdown(hide_table_row_index, unsafe_allow_html=True)
         st.table(tweet_sentiment)
+
+        search_term = st.text_input('Type Word to Search Here')
+        tempdf = tweets[tweets["tweet_text"].str.contains(search_term)]
+        st.write(f'You searched for {search_term}. There are {len(tempdf)} tweets containing {search_term}')
 
     with col2:
         st.subheader("There are {} unique accounts tweeting".format(users['username'].nunique()))
