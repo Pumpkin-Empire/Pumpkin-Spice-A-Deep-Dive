@@ -1,7 +1,6 @@
 import numpy as np
 import streamlit as st
 import pandas as pd
-import config
 import plotly.express as px
 import matplotlib.pyplot as plt
 import re as re
@@ -76,11 +75,6 @@ def get_most_mentions(data):
     ax.set_title("Most Frequently Mentioned Accounts", fontsize=20)
     return fig
 
-# def user_acct_date(data):
-#
-#     fig, ax = plt.subplots()
-#     ax.bar(data.groupby(data.acct_created.dt.year).size(), data['acct_created'], color=sns.color_palette('rocket_r'), edgecolor='black', linewidth=1)
-#     return fig
 
 def show_wordcloud(data):
 
@@ -89,7 +83,7 @@ def show_wordcloud(data):
     extended_stop = ['https', 'stud_status', '//t.co/7pw885i0zw', 'ashnikko', 'lvnareclps', "n't", 'digitalprex',
                      '//t.co/qthygenygi',
                      'ik', 'een', 'heb', 'ca', 'teresamaly', 'bigtoofedblonde', 'ikuflyinn', 'mi', 'llego', 'en',
-                     'kaars', 'botten',
+                     'kaars', 'botten', 'nipple', 'nipples',
                      'kaarsen', 'fuck', 'fuc', 'bitch', 'like_count', 'False', 'tweet_id', 'RT', 'author_id', 'rows',
                      'm', 'gt', 'True', 'polarity', 'sentiment', 'columns', 'positive', 'negative', 'neutral',
                      'Reply', 'x']

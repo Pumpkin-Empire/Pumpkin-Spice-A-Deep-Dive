@@ -1,9 +1,6 @@
 import numpy as np
 import streamlit as st
 import pandas as pd
-#from sqlalchemy import create_engine ## old sql alchemy connection
-#from sqlalchemy.orm import sessionmaker
-import config
 import plotly.express as px
 import matplotlib.pyplot as plt
 import re as re
