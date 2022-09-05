@@ -115,43 +115,75 @@ def loop_connect(search, next_token) -> tuple:
     return json_response, next_token
 
 
-def connect_loop(search):
+# def connect_loop(search):
+#     """Continuously makes API requests on a fifteen-minute timer.
+#     Closes when the Docker container is stopped."""
+#     print_current_date_and_time()
+#
+#     next_token = None
+#
+#     while True:
+#
+#         # Open postgres connection
+#         engine = create_engine("postgresql://{user}:{pw}@{host}:{port}/{db}".format
+#                                (host=hostname, port=port, db=dbname, user=uname, pw=pwd),
+#                                pool_size=20, max_overflow=0)
+#         try:
+#             engine.connect()
+#             print("Database connection opened", flush=True)
+#         except (psycopg2.OperationalError, sqlalchemy.exc.OperationalError):
+#             print("OperationalError: Database not running. Please restart Docker "
+#                   "containers")
+#             break
+#         # local engine
+#         # engine = create_engine("postgresql://{user}:{pw}@{host}/{db}".format(
+#         #     host=hostname, db=dbname, user=uname, pw=pwd), pool_size=20,
+#         #     max_overflow=0)
+#
+#         response, next_token = loop_connect(search, next_token)
+#         add_tweets_to_db(search, response, engine)
+#         add_users_to_db(response, engine)
+#
+#         # End postgres connection
+#         engine.dispose()
+#         print("Database connection closed", flush=True)
+#
+#         # Wait ~15min for next request
+#         print("\nWaiting 15 minutes until next request\n", flush=True)
+#         print("*" * 60 + "\n", flush=True)
+#         time.sleep(900)
+
+def streamlit_connect(search, next_token=None):
     """Continuously makes API requests on a fifteen-minute timer.
     Closes when the Docker container is stopped."""
     print_current_date_and_time()
 
-    next_token = None
+    # next_token = None
 
-    while True:
+    # Open postgres connection
+    engine = create_engine("postgresql://{user}:{pw}@{host}:{port}/{db}".format
+                           (host=hostname, port=port, db=dbname, user=uname, pw=pwd),
+                           pool_size=20, max_overflow=0)
+    try:
+        engine.connect()
+        print("Database connection opened", flush=True)
+    except (psycopg2.OperationalError, sqlalchemy.exc.OperationalError):
+        print("OperationalError: Database not running. Please restart Docker "
+              "containers")
+    # local engine
+    # engine = create_engine("postgresql://{user}:{pw}@{host}/{db}".format(
+    #     host=hostname, db=dbname, user=uname, pw=pwd), pool_size=20,
+    #     max_overflow=0)
+    print(f"Querying Twitter API for: {search}")
+    response, next_token = loop_connect(search, next_token)
+    add_tweets_to_db(search, response, engine)
+    add_users_to_db(response, engine)
 
-        # Open postgres connection
-        engine = create_engine("postgresql://{user}:{pw}@{host}:{port}/{db}".format
-                               (host=hostname, port=port, db=dbname, user=uname, pw=pwd),
-                               pool_size=20, max_overflow=0)
-        try:
-            engine.connect()
-            print("Database connection opened", flush=True)
-        except (psycopg2.OperationalError, sqlalchemy.exc.OperationalError):
-            print("OperationalError: Database not running. Please restart Docker "
-                  "containers")
-            break
-        # local engine
-        # engine = create_engine("postgresql://{user}:{pw}@{host}/{db}".format(
-        #     host=hostname, db=dbname, user=uname, pw=pwd), pool_size=20,
-        #     max_overflow=0)
+    # End postgres connection
+    engine.dispose()
+    print("Database connection closed", flush=True)
 
-        response, next_token = loop_connect(search, next_token)
-        add_tweets_to_db(search, response, engine)
-        add_users_to_db(response, engine)
-
-        # End postgres connection
-        engine.dispose()
-        print("Database connection closed", flush=True)
-
-        # Wait ~15min for next request
-        print("\nWaiting 15 minutes until next request\n", flush=True)
-        print("*" * 60 + "\n", flush=True)
-        time.sleep(900)
+    return next_token
 
 
 def add_tweets_to_db(search, twitter_response: dict, engine):

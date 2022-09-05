@@ -24,27 +24,8 @@ pwd = db_con.pwd
 # topic = None
 st.set_page_config(page_title=f"Pumpkin Empire", layout='wide')
 
-# engine = psycopg2.connect(
-#         host=hostname,
-#         port=port,
-#         database=database,
-#         user=user,
-#         password=pwd)
-#
-# temp_pull = pd.read_sql("SELECT * FROM tweets limit 2", engine)
-# try:
-#     topic = temp_pull.iloc[0,8]
-#     topic = topic.title()
-#     st.set_page_config(page_title=f"{topic} Empire: a {topic} Tweets Journey",
-#                        layout='wide')
-# except IndexError:
-#     st.set_page_config(page_title=f"Pumpkin Empire",
-#                        layout='wide')
-#
-# engine.close()
 
-
-### data load here, initialize connection ###
+# data load here, initialize connection
 @st.experimental_singleton
 def init_connection():
     return psycopg2.connect(
@@ -60,7 +41,7 @@ conn = init_connection()
 
 
 
-## data frames ##
+# data frames
 tweets = pd.read_sql("SELECT * FROM tweets", conn)
 tweets['date'] = pd.to_datetime(tweets['date'])
 tweets['Reply'] = tweets['tweet_text'].str.startswith('@')
@@ -72,15 +53,29 @@ users['acct_created'] = pd.to_datetime(users['acct_created'])
 mergedDF = pd.merge(tweets, users, how="left", left_on="author_id", right_on="user_id")
 user_stack = mergedDF.groupby(mergedDF.acct_created.dt.year)['sentiment'].value_counts()
 
-topic = None
+# with st.form(key ='Form1'):
+#     with st.sidebar:
+#         user_word = st.text_input("Enter a keyword", "habs")
+#         select_language = st.radio('Tweet language', ('All', 'English', 'French'))
+#         include_retweets = st.checkbox('Include retweets in data')
+#         num_of_tweets = st.number_input('Maximum number of tweets', 100)
+#         submitted1 = st.form_submit_button(label = 'Search Twitter 🔎')
 
-search_term = st.sidebar.text_input('Type a new topic and hit Enter')
-if len(search_term) > 0:
-    connect_loop(search_term)
-    time.sleep(5)
-    topic = search_term
-    search_term = ''
+topic = None
 topics = tweets['topic'].drop_duplicates()
+next_token = None
+
+with st.form(key='Form'):
+    with st.sidebar:
+        search_term = st.text_input('Type a new topic and hit Search')
+        submitted = st.form_submit_button(label="Search")
+        if submitted and len(search_term) > 0:
+            streamlit_connect(search_term, next_token)
+            time.sleep(3)
+            # topic = search_term
+            st.experimental_rerun()
+
+
 if topic is None:
     topic = st.sidebar.selectbox('Previous Searches', topics)
 
@@ -104,6 +99,7 @@ try:
 
     ######  Setting up the analysis  #####
     if topic is not None:
+        topic = topic.title()
         st.markdown(f"<h1 style='text-align: center; color: black; '>{topic}: a {topic} Tweets Journey</h1>", unsafe_allow_html=True)
         st.markdown(f"<h3 style='text-align: center; color:grey;'>Exploring the polarizing "
                     f"topic of {topic}, one tweet at a time</h3>", unsafe_allow_html=True)
@@ -112,7 +108,7 @@ try:
     elif len(topics) != 0 :
         st.markdown("<h1 style='text-align: center; color: black'>Please enter a new"
                     " search or select a topic in the sidebar.</h1>", unsafe_allow_html=True)
-    ##add logo/title image if we want
+    # add logo/title image if we want
     # title_image = Image.open('<filepath here>')
     # st.image(title_image)
 
@@ -125,11 +121,13 @@ try:
             st.markdown(' ')
             RT_tweets = tweets[tweets['RT'] == True]
             reply_tweets = tweets[tweets['Reply'] == True]
-            mention_tweets = tweets[(tweets['RT'] == False) & (tweets['Reply'] == False) & (tweets['tweet_text'].str.contains('@'))]
-            plain_text_tweets = tweets[~tweets['tweet_text'].str.contains("@") & ~tweets['tweet_text'].str.contains("RT")]
+            mention_tweets = tweets[(tweets['RT'] == False) & (tweets['Reply'] == False)
+                                    & (tweets['tweet_text'].str.contains('@'))]
+            plain_text_tweets = tweets[~tweets['tweet_text'].str.contains("@")
+                                       & ~tweets['tweet_text'].str.contains("RT")]
 
-            len_data = [len(RT_tweets) / len(tweets), len(mention_tweets) / len(tweets), len(reply_tweets) / len(tweets),
-                        len(plain_text_tweets) / len(tweets)]
+            len_data = [len(RT_tweets) / len(tweets), len(mention_tweets) / len(tweets),
+                        len(reply_tweets) / len(tweets), len(plain_text_tweets) / len(tweets)]
             item_data = ['Retweets', 'Mentions', 'Replies', 'Original Tweets']
             # define Seaborn color palette to use
             colors = sns.color_palette('rocket_r')[0:4]
@@ -154,13 +152,15 @@ try:
         with col5:
             st.subheader("There are {} unique accounts tweeting".format(users['username'].nunique()))
             st.markdown('')
-            usertweets = mergedDF.groupby('username').count()['tweet_text'].sort_values(ascending=False).reset_index(name="Tweet Count")
+            usertweets = mergedDF.groupby('username').count()['tweet_text'].sort_values(ascending=False)\
+                .reset_index(name="Tweet Count")
             # tweet_sentiment = tweets.groupby(tweets['sentiment']).size().reset_index(name='Count')
             st.markdown("#### Top 10 Accounts by Tweet Count")
             st.table(usertweets[:10])
 
         with col6:
-            st.markdown("<h3 style='text-align: center; color:black;'>Account Creation Date and Sentiment</h3>", unsafe_allow_html=True)
+            st.markdown("<h3 style='text-align: center; color:black;'>"
+                        "Account Creation Date and Sentiment</h3>", unsafe_allow_html=True)
             # st.bar_chart(data=users.groupby(users.acct_created.dt.year).size(), y=1500, use_container_width=True)
             ###User account creation chart by sentiment#####
             color_pallette = sns.color_palette("Spectral")
@@ -176,10 +176,10 @@ try:
 
     with st.container():
         with col7:
-    #### most hashtags chart ###
+            #### most hashtags chart ###
             st.pyplot(get_most_hashtags(tweets))
         with col8:
-    #### most mentions chart ###
+            #### most mentions chart ###
             st.pyplot(get_most_mentions(tweets))
 
     with st.expander("Word Cloud"):
