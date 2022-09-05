@@ -197,7 +197,7 @@ def add_users_to_db(twitter_response: dict, engine):
 
 
 if __name__ == "__main__":
-
+    time.sleep(3)
     # Get the user configuration
     print_current_date_and_time()
     print("Attempting to get configuration from config.py")

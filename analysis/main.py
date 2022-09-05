@@ -14,18 +14,38 @@ import time
 # Gives time for API request & database write to finish before trying to connect.
 time.sleep(10)
 
-st.set_page_config(page_title="Tweets Analysis Search Words",
+hostname = db_con.hostname
+port = db_con.port
+database = db_con.dbname
+user = db_con.uname
+pwd = db_con.pwd
+
+engine = psycopg2.connect(
+        host=hostname,
+        port=port,
+        database=database,
+        user=user,
+        password=pwd)
+
+temp_pull = pd.read_sql("SELECT * FROM tweets limit 2", engine)
+topic = temp_pull.iloc[0,8]
+topic = topic.title()
+
+engine.close()
+
+st.set_page_config(page_title=f"{topic} Empire: a {topic} Tweets Journey",
                    layout='wide')
+
 
 ### data load here, initialize connection ###
 @st.experimental_singleton
 def init_connection():
     return psycopg2.connect(
-        host=db_con.hostname,
-        port=db_con.port,
-        database=db_con.dbname,
-        user=db_con.uname,
-        password=db_con.pwd
+        host=hostname,
+        port=port,
+        database=database,
+        user=user,
+        password=pwd
     )
 
 
@@ -54,13 +74,14 @@ print(tweets.loc[tweets['polarity'] < 0])
 
 ######  Setting up the analysis  #####
 
-st.markdown("<h1 style='text-align: center; color: black; '>Pumpkin Empire: a Pumpkin Spice Tweets Journey</h1>", unsafe_allow_html=True)
+st.markdown(f"<h1 style='text-align: center; color: black; '>{topic}: a {topic} Tweets Journey</h1>", unsafe_allow_html=True)
 
 ##add logo/title image if we want
 # title_image = Image.open('<filepath here>')
 # st.image(title_image)
 
-st.markdown("<h3 style='text-align: center; color:grey;'>Exploring the polarizing topic of Pumpkin Spice, one tweet at a time</h3>", unsafe_allow_html=True)
+st.markdown(f"<h3 style='text-align: center; color:grey;'>Exploring the polarizing "
+            f"topic of {topic}, one tweet at a time</h3>", unsafe_allow_html=True)
 vert_space = '<div style="padding: 30px 5px;"></div>'
 st.markdown(vert_space, unsafe_allow_html=True)
 
