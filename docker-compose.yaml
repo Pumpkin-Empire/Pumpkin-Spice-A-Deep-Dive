@@ -18,11 +18,17 @@ services:
       - database
     ports:
       - 8080:8080
-  api :
-    build: ./api/
+#  api :
+#    build: ./api/
+#    depends_on:
+#      - database
+#  analysis :
+#    build: ./analysis/
+#    ports:
+#      - 8501:8501
+  app:
+    build: ./app/
     depends_on:
       - database
-  analysis :
-    build: ./analysis/
     ports:
       - 8501:8501
