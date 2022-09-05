@@ -35,7 +35,7 @@ engine.close()
 
 st.set_page_config(page_title=f"{topic} Empire: a {topic} Tweets Journey",
                    layout='wide')
-
+st.set_option('deprecation.showPyplotGlobalUse', False)
 
 ### data load here, initialize connection ###
 @st.experimental_singleton
