@@ -188,50 +188,56 @@ def streamlit_connect(search, next_token=None):
 
 def add_tweets_to_db(search, twitter_response: dict, engine):
     """Connects to postgres database and inserts Tweets to the tweets table."""
-    for twit in twitter_response['data']:
-        session_factory = sessionmaker(bind=engine)
-        session = session_factory()
-        tweet = session.query(Tweet).filter_by(tweet_id=twit['id']).first()
-        if not tweet:
-            tweet_id = twit['id']
-            author_id = twit['author_id']
-            tweet_text = twit['text']
-            like_count = twit['public_metrics']['like_count']
-            quote_count = twit['public_metrics']['quote_count']
-            reply_count = twit['public_metrics']['reply_count']
-            retweet_count = twit['public_metrics']['retweet_count']
-            request_date = datetime.today().strftime('%Y-%m-%d')
-            topic = search
-            tweet = Tweet(tweet_id, author_id, tweet_text, like_count, quote_count,
-                          reply_count, retweet_count, request_date, topic)
-            session.add(tweet)
-            session.commit()
-    print("Successfully wrote tweets to database", flush=True)
+    try:
+        for twit in twitter_response['data']:
+            session_factory = sessionmaker(bind=engine)
+            session = session_factory()
+            tweet = session.query(Tweet).filter_by(tweet_id=twit['id']).first()
+            if not tweet:
+                tweet_id = twit['id']
+                author_id = twit['author_id']
+                tweet_text = twit['text']
+                like_count = twit['public_metrics']['like_count']
+                quote_count = twit['public_metrics']['quote_count']
+                reply_count = twit['public_metrics']['reply_count']
+                retweet_count = twit['public_metrics']['retweet_count']
+                request_date = datetime.today().strftime('%Y-%m-%d')
+                topic = search
+                tweet = Tweet(tweet_id, author_id, tweet_text, like_count, quote_count,
+                              reply_count, retweet_count, request_date, topic)
+                session.add(tweet)
+                session.commit()
+        print("Successfully wrote tweets to database", flush=True)
+    except KeyError:
+        print("No tweets found", flush=True)
 
 
 def add_users_to_db(twitter_response: dict, engine):
     """Connects to postgres database and inserts Tweets to the users table."""
-    for acct in twitter_response['includes']['users']:
-        session_factory = sessionmaker(bind=engine)
-        session = session_factory()
-        user = session.query(User).filter_by(user_id=acct['id']).first()
-        if not user:
-            user_id = acct['id']
-            username = acct['username']
-            try:
-                location = acct['location']
-            except KeyError:
-                location = None
-            follower_count = acct['public_metrics']['followers_count']
-            following_count = acct['public_metrics']['following_count']
-            tweet_count = acct['public_metrics']['tweet_count']
-            acct_date = acct['created_at']
-            user = User(user_id, username, location, follower_count, following_count,
-                        tweet_count, acct_date)
+    try:
+        for acct in twitter_response['includes']['users']:
+            session_factory = sessionmaker(bind=engine)
+            session = session_factory()
+            user = session.query(User).filter_by(user_id=acct['id']).first()
+            if not user:
+                user_id = acct['id']
+                username = acct['username']
+                try:
+                    location = acct['location']
+                except KeyError:
+                    location = None
+                follower_count = acct['public_metrics']['followers_count']
+                following_count = acct['public_metrics']['following_count']
+                tweet_count = acct['public_metrics']['tweet_count']
+                acct_date = acct['created_at']
+                user = User(user_id, username, location, follower_count, following_count,
+                            tweet_count, acct_date)
 
-            session.add(user)
-            session.commit()
-    print("Successfully wrote users to database", flush=True)
+                session.add(user)
+                session.commit()
+        print("Successfully wrote users to database", flush=True)
+    except KeyError:
+        pass
 
 
 # if __name__ == "__main__":

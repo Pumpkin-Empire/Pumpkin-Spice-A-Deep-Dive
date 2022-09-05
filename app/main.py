@@ -61,23 +61,26 @@ user_stack = mergedDF.groupby(mergedDF.acct_created.dt.year)['sentiment'].value_
 #         num_of_tweets = st.number_input('Maximum number of tweets', 100)
 #         submitted1 = st.form_submit_button(label = 'Search Twitter 🔎')
 
-topic = None
+# topic = None
+
 topics = tweets['topic'].drop_duplicates()
+
+topic = None
 next_token = None
 
 with st.form(key='Form'):
     with st.sidebar:
-        search_term = st.text_input('Type a new topic and hit Search')
+        search_term = st.text_input('Type a topic and click Search to add to the database')
         submitted = st.form_submit_button(label="Search")
         if submitted and len(search_term) > 0:
+            search_term = search_term.title()
             streamlit_connect(search_term, next_token)
             time.sleep(3)
             # topic = search_term
             st.experimental_rerun()
 
-
 if topic is None:
-    topic = st.sidebar.selectbox('Previous Searches', topics)
+    topic = st.sidebar.selectbox('Previous Searches', topics[::-1])
 
 
 try:
