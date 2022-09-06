@@ -8,8 +8,7 @@ from datetime import datetime, timedelta, date
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import *
-import config
-
+from app import config
 
 
 def get_date_string() -> str:

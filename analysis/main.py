@@ -132,7 +132,8 @@ with st.container():
         st.table(tweet_sentiment)
 
     with col5:
-        st.subheader("There are {} unique accounts tweeting".format(users['username'].nunique()))
+        user_count_df = tweets.loc[tweets['topic'] == topic.title()]
+        st.subheader("There are {} unique accounts tweeting".format(user_count_df['author_id'].unique()))
         st.markdown('')
         usertweets = mergedDF.groupby('username').count()['tweet_text'].sort_values(ascending=False).reset_index(name="Tweet Count")
         # tweet_sentiment = tweets.groupby(tweets['sentiment']).size().reset_index(name='Count')
@@ -162,6 +163,8 @@ with st.container():
     with col8:
 #### most mentions chart ###
         st.pyplot(get_most_mentions(tweets))
+
+
 
 with st.expander("Word Cloud"):
 

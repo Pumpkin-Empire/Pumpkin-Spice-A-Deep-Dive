@@ -10,8 +10,8 @@ node_modules
 # Ignore API config file
 analysis/config.py
 config.py
-api/config.py
 app/config.py
+api/config.py
 
 __pycache__/
 
