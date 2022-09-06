@@ -89,8 +89,8 @@ def loop_connect(search, next_token) -> tuple:
 
     Returns: All responses appended to a single dict."""
     # May be able to make these global, depending on the automation used later.
-    max_requests_per_call = 30
-    max_requests_per_window = 60
+    max_requests_per_call = 100
+    max_requests_per_window = 180
 
     # Create URL for response
     bearer_token = config.bearer_token
