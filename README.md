@@ -52,13 +52,12 @@ bearer_token = "<your bearer token>"
 
 
 ***
-## Starting the Pipeline
-
-First, open Docker Dashboard on your computer. 
 
 
 **Starting the Pipeline**
 ---
+
+First, open Docker Dashboard on your computer. 
 
 Getting started is easy. Navigate to the project's folder in the command line and enter the following command:
 
@@ -67,7 +66,7 @@ docker-compose up -d
 ```
 
 
-> **Note:** The first time you run docker-compose will take a few minutes. This is due to Docker downloading the requirements for each image. If you were to rebuild the image, it would compose much faster.
+> **Note:** The first time you run docker-compose will take a few minutes. This is due to Docker downloading the requirements for each image. If you were to re-compose the image, it would complete much faster.
 
 With that, your pipeline is running. 
 
