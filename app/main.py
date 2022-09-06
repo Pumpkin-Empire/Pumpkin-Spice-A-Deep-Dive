@@ -106,9 +106,10 @@ with st.container():
         plt.xlabel('Year Account Created')
         plt.legend(bbox_to_anchor=(1.05, 1))
         st.pyplot(plt.show(), user_container_width=True)
-        plt.cla()
+
         with st.expander('User Account Created Year'):
             st.write(users.groupby(users.acct_created.dt.year).size())
+        plt.cla()
 
 
 with st.container():
