@@ -8,6 +8,7 @@ import seaborn as sns
 import psycopg2
 from textblob import TextBlob
 from utils import get_most_hashtags, get_most_mentions, show_wordcloud
+import config
 
 st.set_page_config(page_title="Pumpkin Empire: a Pumpkin Spice Tweets Journey",
                    layout='wide')
@@ -15,7 +16,13 @@ st.set_page_config(page_title="Pumpkin Empire: a Pumpkin Spice Tweets Journey",
 ### data load here, initialize connection ###
 @st.experimental_singleton
 def init_connection():
-    return psycopg2.connect(**st.secrets["postgres"])
+    return psycopg2.connect(
+        host= config.hostname,
+        port= config.port,
+        database= config.dbname,
+        user=config.uname,
+        password=config.pwd
+    )
 
 conn = init_connection()
 
@@ -63,7 +70,7 @@ with st.container():
                     len(plain_text_tweets) / len(tweets)]
         item_data = ['Retweets', 'Mentions', 'Replies', 'Original Tweets']
         # define Seaborn color palette to use
-        colors = sns.color_palette('rocket_r')[0:4]
+        colors = sns.color_palette('rocket_r')[:4] #rocket_r
         # create pie chart
         fig = plt.figure()
         plt.pie(len_data, labels=item_data, colors=colors, autopct='%.0f%%', textprops={'fontsize': 14})
@@ -102,7 +109,7 @@ with st.container():
         ###User account creation chart by sentiment#####
         color_pallette = sns.color_palette("Spectral")
         user_stack_chart = user_stack.unstack()
-        user_stack_chart.plot.bar(stacked=True, color=color_pallette)
+        user_stack_chart.plot.bar(stacked=True, color=color_pallette, edgecolor='black', linewidth=1)
         plt.xlabel('Year Account Created')
         plt.legend(bbox_to_anchor=(1.05, 1))
         st.pyplot(plt.show(), user_container_width=True)

@@ -92,6 +92,7 @@ def show_wordcloud(data):
 
     wordcloud = WordCloud(
         background_color='white',
+        colormap='rocket_r',
         stopwords=STOPWORDS,
         max_words=200,
         max_font_size=40,
