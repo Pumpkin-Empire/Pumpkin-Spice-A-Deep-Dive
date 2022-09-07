@@ -147,3 +147,10 @@ To close the pipeline, open Docker Dashboard and click on the Containers tab. Fr
 
 ## Learning Resources
 
+- [Data Engineering](https://www.coursera.org/articles/what-does-a-data-engineer-do-and-how-do-i-become-one)
+- [Rest API](https://restfulapi.net)
+- [Introduction to SQL](https://www.w3schools.com/sql/sql_intro.asp)
+- [Jupyter Notebooks | Pandas](https://towardsdatascience.com/exploratory-data-analysis-with-pandas-and-jupyter-notebooks-36008090d813)
+- [Exploratory Analysis](https://towardsdatascience.com/exploratory-data-analysis-8fc1cb20fd15)
+- [Streamlit](https://www.analyticsvidhya.com/blog/2020/10/create-interactive-dashboards-with-streamlit-and-python/)
+- [Pumpkin Spice](https://www.allrecipes.com/recipe/20476/pumpkin-spice/)
