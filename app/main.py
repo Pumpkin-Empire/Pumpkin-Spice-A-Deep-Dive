@@ -98,19 +98,19 @@ try:
     user_stack = mergedDF.groupby(mergedDF.acct_created.dt.year)['sentiment'].value_counts()
 
     print(tweets.loc[tweets['polarity'] < 0])
-
+st.markdown("<h1 style='text-align: center; color: black'>Twitterlyzer: A Tweets Analyzer</h1>", unsafe_allow_html=True)
 
     ######  Setting up the analysis  #####
     if topic is not None:
         topic = topic.title()
-        st.markdown(f"<h1 style='text-align: center; color: black; '>{topic}: a {topic} Tweets Journey</h1>", unsafe_allow_html=True)
+        st.markdown(f"<h2 style='text-align: center; color: black; '>{topic}: a {topic} Tweets Journey</h2>", unsafe_allow_html=True)
         st.markdown(f"<h3 style='text-align: center; color:grey;'>Exploring the polarizing "
                     f"topic of {topic}, one tweet at a time</h3>", unsafe_allow_html=True)
         vert_space = '<div style="padding: 30px 5px;"></div>'
         st.markdown(vert_space, unsafe_allow_html=True)
     elif len(topics) != 0 :
-        st.markdown("<h1 style='text-align: center; color: black'>Please enter a new"
-                    " search or select a topic in the sidebar.</h1>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align: center; color: black'>Please enter a new"
+                    " search or select a topic in the sidebar.</h2>", unsafe_allow_html=True)
     # add logo/title image if we want
     # title_image = Image.open('<filepath here>')
     # st.image(title_image)
