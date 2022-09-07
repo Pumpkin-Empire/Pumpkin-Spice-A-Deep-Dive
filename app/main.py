@@ -98,7 +98,7 @@ try:
     user_stack = mergedDF.groupby(mergedDF.acct_created.dt.year)['sentiment'].value_counts()
 
     print(tweets.loc[tweets['polarity'] < 0])
-st.markdown("<h1 style='text-align: center; color: black'>Twitterlyzer: A Tweets Analyzer</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: black'>Twitterlyzer: A Tweets Analyzer</h1>", unsafe_allow_html=True)
 
     ######  Setting up the analysis  #####
     if topic is not None:
