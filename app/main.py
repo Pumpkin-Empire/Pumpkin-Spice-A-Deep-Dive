@@ -22,7 +22,7 @@ user = db_con.uname
 pwd = db_con.pwd
 
 # topic = None
-st.set_page_config(page_title=f"Pumpkin Empire", layout='wide')
+st.set_page_config(page_title=f"Twitter Analyzer", layout='wide')
 
 
 # data load here, initialize connection
@@ -132,11 +132,10 @@ try:
             len_data = [len(RT_tweets) / len(tweets), len(mention_tweets) / len(tweets),
                         len(reply_tweets) / len(tweets), len(plain_text_tweets) / len(tweets)]
             item_data = ['Retweets', 'Mentions', 'Replies', 'Original Tweets']
-            # define Seaborn color palette to use
-            colors = sns.color_palette('rocket_r')[0:4]
+
             # create pie chart
             fig = plt.figure()
-            plt.pie(len_data, labels=item_data, colors=colors, autopct='%.0f%%', textprops={'fontsize': 14})
+            plt.pie(len_data, labels=item_data, colors=['cornflowerblue', 'ghostwhite', 'royalblue', 'lightsteelblue'], autopct='%.0f%%', textprops={'fontsize': 14})
             plt.axis('equal')
 
             st.pyplot(fig)
@@ -167,9 +166,9 @@ try:
                         "Account Creation Date and Sentiment</h3>", unsafe_allow_html=True)
             # st.bar_chart(data=users.groupby(users.acct_created.dt.year).size(), y=1500, use_container_width=True)
             ###User account creation chart by sentiment#####
-            color_pallette = sns.color_palette("Spectral")
+
             user_stack_chart = user_stack.unstack()
-            user_stack_chart.plot.bar(stacked=True, color=color_pallette)
+            user_stack_chart.plot.bar(stacked=True, color=['navy','cornflowerblue', 'lightsteelblue'], edgecolor='black', linewidth=1)
             plt.xlabel('Year Account Created')
             plt.legend(bbox_to_anchor=(1.05, 1))
             st.pyplot(plt.show(), user_container_width=True)

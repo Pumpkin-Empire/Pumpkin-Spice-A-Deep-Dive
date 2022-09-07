@@ -38,10 +38,10 @@ def get_most_hashtags(data):
     for item in hashtag_ordered_list[:11]:
         hashtag_ordered_keys.append(item[0])
         hashtag_ordered_values.append(item[1])
-    colors = sns.color_palette('rocket_r')
+
     fig, ax = plt.subplots()  # figsize=(12, 12))
     y_pos = np.arange(len(hashtag_ordered_keys))
-    ax.barh(y_pos, list(hashtag_ordered_values)[::-1], align='center', color=colors, edgecolor='black', linewidth=1)
+    ax.barh(y_pos, list(hashtag_ordered_values)[::-1], align='center', color='lightsteelblue', edgecolor='black', linewidth=1)
     ax.set_yticks(y_pos)
     ax.set_yticklabels(list(hashtag_ordered_keys)[::-1])
     ax.set_xlabel("Number of tags")
@@ -69,10 +69,10 @@ def get_most_mentions(data):
     for item in mentions_ordered_list[:11]:
         mentions_ordered_keys.append(item[0])
         mentions_ordered_values.append(item[1])
-    colors = sns.color_palette('rocket_r')
+
     fig, ax = plt.subplots()  # figsize=(12, 12))
     y_pos = np.arange(len(mentions_ordered_values))
-    ax.barh(y_pos, list(mentions_ordered_values)[::-1], align='center', color=colors[1], edgecolor='black', linewidth=1)
+    ax.barh(y_pos, list(mentions_ordered_values)[::-1], align='center', color='navy', edgecolor='black', linewidth=1)
     ax.set_yticks(y_pos)
     ax.set_yticklabels(list(mentions_ordered_keys)[::-1])
     ax.set_xlabel("Number of Mentions")
@@ -96,6 +96,7 @@ def show_wordcloud(data):
 
     wordcloud = WordCloud(
         background_color='white',
+        colormap='Blues_r',
         stopwords=STOPWORDS,
         max_words=200,
         max_font_size=40,
