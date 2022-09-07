@@ -90,7 +90,7 @@ def show_wordcloud(data):
                      'kaars', 'botten',
                      'kaarsen', 'fuck', 'fuc', 'bitch', 'like_count', 'False', 'tweet_id', 'RT', 'author_id', 'rows',
                      'm', 'gt', 'True', 'polarity', 'sentiment', 'columns', 'positive', 'negative', 'neutral',
-                     'Reply', 'x', 'tweet_text', 'dtypes', 'dtype', 'length']
+                     'Reply', 'x', 'tweet_text', 'dtypes', 'dtype', 'length', 'series', 'object', ]
     stopword.extend(extended_stop)
     STOPWORDS.update(extended_stop)
 

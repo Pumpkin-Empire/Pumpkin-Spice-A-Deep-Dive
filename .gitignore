@@ -12,7 +12,7 @@ analysis/config.py
 config.py
 api/config.py
 app/config.py
-
+.ipynb_checkpoints/
 __pycache__/
 
 analysis/.streamlit/secrets.toml
