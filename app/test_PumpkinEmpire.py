@@ -86,16 +86,18 @@ class TestPumpkinEmpire(unittest.TestCase):
         self.assertTrue(response_is_object)
 
     def test_append_dict_values(self):
-        test_dict1 = {'meta': {'next_token': 'asv9v83nv80v289', 'results': 100}, 'includes':
-            {'users': [{'user': 'user1', 'tweet_text': 'tweet1'}, {'user': 'user2', 'tweet_text': 'tweet2'}]},
-                      'other': [1, 2, 3, 4]}
-        test_dict2 = {'meta': {'next_token': 'NAv9v83nv80v290', 'results': 80}, 'includes':
-            {'users': [{'user': 'user3', 'tweet_text': 'tweet3'}, {'user': 'user4', 'tweet_text': 'tweet4'}]},
-                      'other': [5, 6, 7, 8]}
-        expected = {'meta': {'next_token': 'NAv9v83nv80v290', 'results': 80}, 'includes':
-            {'users': [{'user': 'user1', 'tweet_text': 'tweet1'}, {'user': 'user2', 'tweet_text': 'tweet2'},
-                       {'user': 'user3', 'tweet_text': 'tweet3'}, {'user': 'user4', 'tweet_text': 'tweet4'}]},
-                      'other': [1, 2, 3, 4, 5, 6, 7, 8]}
+        test_dict1 = {'meta': {'next_token': 'asv9v83nv80v289', 'results': 100},
+                      'includes': {'users': [{'user': 'user1', 'tweet_text': 'tweet1'},
+                                             {'user': 'user2', 'tweet_text': 'tweet2'}]}, 'other': [1, 2, 3, 4]}
+        test_dict2 = {'meta': {'next_token': 'NAv9v83nv80v290', 'results': 80},
+                      'includes': {'users': [{'user': 'user3', 'tweet_text': 'tweet3'},
+                                             {'user': 'user4', 'tweet_text': 'tweet4'}]}, 'other': [5, 6, 7, 8]}
+        expected = {'meta': {'next_token': 'NAv9v83nv80v290', 'results': 80},
+                    'includes': {'users': [{'user': 'user1', 'tweet_text': 'tweet1'},
+                                           {'user': 'user2', 'tweet_text': 'tweet2'},
+                                           {'user': 'user3', 'tweet_text': 'tweet3'},
+                                           {'user': 'user4', 'tweet_text': 'tweet4'}]},
+                    'other': [1, 2, 3, 4, 5, 6, 7, 8]}
         actual = append_dict_values(test_dict1, test_dict2)
         self.assertEqual(expected, actual)
 
