@@ -76,14 +76,29 @@ class TestPumpkinEmpire(unittest.TestCase):
         # Confirm that the request-response cycle completed successfully.
         self.assertTrue(response.ok)
 
+    def test_connect_to_api(self):
+        test_url = "http://jsonplaceholder.typicode.com/todos"
+        url = create_url("pumpkin spice")
+        test_bearer = 's3dfj80asv0sv3as3209nv9asDk'
+        headers = create_headers(test_bearer)
+        response = connect_to_api(test_url, headers, url[1])
+        response_is_object = isinstance(response, list)
+        self.assertTrue(response_is_object)
+
+    def test_append_dict_values(self):
+        test_dict1 = {'meta': {'next_token': 'asv9v83nv80v289', 'results': 100}, 'includes':
+            {'users': [{'user': 'user1', 'tweet_text': 'tweet1'}, {'user': 'user2', 'tweet_text': 'tweet2'}]},
+                      'other': [1, 2, 3, 4]}
+        test_dict2 = {'meta': {'next_token': 'NAv9v83nv80v290', 'results': 80}, 'includes':
+            {'users': [{'user': 'user3', 'tweet_text': 'tweet3'}, {'user': 'user4', 'tweet_text': 'tweet4'}]},
+                      'other': [5, 6, 7, 8]}
+        expected = {'meta': {'next_token': 'NAv9v83nv80v290', 'results': 80}, 'includes':
+            {'users': [{'user': 'user1', 'tweet_text': 'tweet1'}, {'user': 'user2', 'tweet_text': 'tweet2'},
+                       {'user': 'user3', 'tweet_text': 'tweet3'}, {'user': 'user4', 'tweet_text': 'tweet4'}]},
+                      'other': [1, 2, 3, 4, 5, 6, 7, 8]}
+        actual = append_dict_values(test_dict1, test_dict2)
+        self.assertEqual(expected, actual)
+
 
 if __name__ == '__main__':
     unittest.main()
-
-# class TestCase(unittest.TestCase):
-#
-#     @mock.patch('yourfile.datetime')
-#     def test_dt(self, mock_dt):
-#         mock_dt.utcnow = mock.Mock(return_value=datetime(1901, 12, 21))
-#         r = get_report_month_key()
-#         self.assertEqual('190112', r)

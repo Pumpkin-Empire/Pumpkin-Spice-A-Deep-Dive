@@ -91,10 +91,13 @@ def append_dict_values(base_dict: dict, append_dict: dict) -> dict:
     base_dict_keys = list(base_dict.keys())
     for key in base_dict_keys:
         if key == 'meta':
+            """Meta information from Twitter response."""
             base_dict[key] = append_dict[key]
         elif key == 'includes':
+            """Extends list of users in 'includes' key."""
             base_dict[key]['users'].extend(append_dict[key]['users'])
         else:
+            """All other keys contain lists as their values, extend the original list."""
             base_dict[key].extend(append_dict[key])
     return base_dict
 
