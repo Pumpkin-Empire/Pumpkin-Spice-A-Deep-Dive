@@ -31,7 +31,7 @@ def get_date_string(yesterday, current_time) -> str:
     time_and_formatting = 'T' + current_time.strftime("%H:%M:%S") + 'Z'
     return str(yesterday) + time_and_formatting
 
-print(get_date_string(get_yesterday_date(), get_current_time()))
+
 def print_current_date_and_time():
     """"Prints the current date & time"""
     now = datetime.now()
