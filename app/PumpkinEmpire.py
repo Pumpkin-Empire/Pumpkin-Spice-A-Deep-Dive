@@ -27,7 +27,6 @@ def get_current_time():
 def get_date_string(yesterday, current_time) -> str:
     """Takes a date & time and returns a string formatted for Twitter API v2
     query:   '2022-08-23T00:01:00Z' """
-    print(yesterday)
     time_and_formatting = 'T' + current_time.strftime("%H:%M:%S") + 'Z'
     return str(yesterday) + time_and_formatting
 
@@ -56,6 +55,8 @@ def create_headers(bearer_token) -> dict:
 
 def create_url(search, max_results=100) -> tuple:
     """Create full URL for Twitter API request."""
+    if max_results < 10:
+        max_results = 10
     search_url = "https://api.twitter.com/2/tweets/search/recent?"
     yesterday = get_yesterday_date()
     current_time = get_current_time()

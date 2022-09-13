@@ -30,6 +30,45 @@ class TestPumpkinEmpire(unittest.TestCase):
             with self.assertRaises(AttributeError):
                 auth()
 
+    def test_create_headers(self):
+        test_bearer = 'asbn3920hasn358a'
+        expected = {'Authorization': f'Bearer {test_bearer}'}
+        actual = create_headers(test_bearer)
+        self.assertEqual(expected, actual)
+
+    @freeze_time('2022-09-13 15:46:43')
+    def test_create_url(self):
+        test_search = "pumpkin spice"
+        expected = ('https://api.twitter.com/2/tweets/search/recent?',
+                    {'query': 'pumpkin spice', 'start_time': '2022-09-12T15:46:43Z',
+                     'max_results': 100, 'tweet.fields': 'entities,geo,public_metrics',
+                     'expansions': 'attachments.media_keys,author_id', 'place.fields':
+                         'geo', 'user.fields': 'created_at,location,public_metrics', 'next_token': ''})
+        actual = create_url(test_search)
+        self.assertEqual(expected, actual)
+
+    @freeze_time('2022-09-13 15:46:43')
+    def test_create_url_max_results_changed(self):
+        test_search = "pumpkin spice"
+        expected = ('https://api.twitter.com/2/tweets/search/recent?',
+                    {'query': 'pumpkin spice', 'start_time': '2022-09-12T15:46:43Z',
+                     'max_results': 80, 'tweet.fields': 'entities,geo,public_metrics',
+                     'expansions': 'attachments.media_keys,author_id', 'place.fields':
+                         'geo', 'user.fields': 'created_at,location,public_metrics', 'next_token': ''})
+        actual = create_url(test_search, 80)
+        self.assertEqual(expected, actual)
+
+    @freeze_time('2022-09-13 15:46:43')
+    def test_create_url_max_results_less_than_ten(self):
+        test_search = "pumpkin spice"
+        expected = ('https://api.twitter.com/2/tweets/search/recent?',
+                    {'query': 'pumpkin spice', 'start_time': '2022-09-12T15:46:43Z',
+                     'max_results': 10, 'tweet.fields': 'entities,geo,public_metrics',
+                     'expansions': 'attachments.media_keys,author_id', 'place.fields':
+                         'geo', 'user.fields': 'created_at,location,public_metrics', 'next_token': ''})
+        actual = create_url(test_search, 5)
+        self.assertEqual(expected, actual)
+
 
 if __name__ == '__main__':
     unittest.main()
