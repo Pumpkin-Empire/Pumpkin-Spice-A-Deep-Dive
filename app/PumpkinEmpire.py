@@ -1,7 +1,6 @@
 # import sys
 import psycopg2
 import requests
-import time
 import sqlalchemy.exc
 # import db_con
 from datetime import datetime, timedelta, date
@@ -10,23 +9,29 @@ from sqlalchemy.orm import sessionmaker
 from models import *
 import config
 
-hostname='database'
-port='5432'
-dbname='database'
-uname='postgres'
-pwd='docker'
+hostname = 'database'
+port = '5432'
+dbname = 'database'
+uname = 'postgres'
+pwd = 'docker'
 
 
-def get_date_string() -> str:
-    """Returns today's date and time from 24hrs ago, to use
-    when searching for tweets from previous day. Formatted for Twitter API v2
+def get_yesterday_date():
+    return date.today() - timedelta(days=1)
+
+
+def get_current_time():
+    return datetime.now()
+
+
+def get_date_string(yesterday, current_time) -> str:
+    """Takes a date & time and returns a string formatted for Twitter API v2
     query:   '2022-08-23T00:01:00Z' """
-    yesterday = date.today() - timedelta(days=1)
-    current_time = datetime.now()
+    print(yesterday)
     time_and_formatting = 'T' + current_time.strftime("%H:%M:%S") + 'Z'
     return str(yesterday) + time_and_formatting
 
-
+print(get_date_string(get_yesterday_date(), get_current_time()))
 def print_current_date_and_time():
     """"Prints the current date & time"""
     now = datetime.now()
@@ -47,8 +52,10 @@ def create_headers(bearer_token) -> dict:
 def create_url(search, max_results=100) -> tuple:
     """Create full URL for Twitter API request."""
     search_url = "https://api.twitter.com/2/tweets/search/recent?"
+    yesterday = get_yesterday_date()
+    current_time = get_current_time()
     query_params = {'query': search,
-                    'start_time': get_date_string(),
+                    'start_time': get_date_string(yesterday, current_time),
                     'max_results': max_results,
                     'tweet.fields': 'entities,geo,public_metrics',
                     'expansions': 'attachments.media_keys,author_id',
