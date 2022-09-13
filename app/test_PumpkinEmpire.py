@@ -1,13 +1,9 @@
-# import PumpkinEmpire
 from PumpkinEmpire import *
-import PumpkinEmpire
 import unittest
-from unittest.mock import MagicMock
 from mock import patch
 from datetime import datetime, date
 from freezegun import freeze_time
-from io import TextIOWrapper, BytesIO
-import config_test, config_test_empty
+from app import config_test, config_test_empty
 
 
 class TestPumpkinEmpire(unittest.TestCase):

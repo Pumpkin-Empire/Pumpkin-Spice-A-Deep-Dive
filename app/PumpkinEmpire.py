@@ -8,7 +8,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import *
 import config
-import config_test_empty
 
 hostname = 'database'
 port = '5432'
