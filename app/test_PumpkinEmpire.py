@@ -4,6 +4,7 @@ from mock import patch
 from datetime import datetime, date
 from freezegun import freeze_time
 from app import config_test, config_test_empty
+import requests
 
 
 class TestPumpkinEmpire(unittest.TestCase):
@@ -68,6 +69,12 @@ class TestPumpkinEmpire(unittest.TestCase):
                          'geo', 'user.fields': 'created_at,location,public_metrics', 'next_token': ''})
         actual = create_url(test_search, 5)
         self.assertEqual(expected, actual)
+
+    def test_response(self):
+        # Send a request to the API server and store the response.
+        response = requests.get('http://jsonplaceholder.typicode.com/todos')
+        # Confirm that the request-response cycle completed successfully.
+        self.assertTrue(response.ok)
 
 
 if __name__ == '__main__':

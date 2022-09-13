@@ -15,6 +15,8 @@ dbname = 'database'
 uname = 'postgres'
 pwd = 'docker'
 
+API_URL = "https://api.twitter.com/2/tweets/search/recent?"
+
 
 def get_yesterday_date():
     return date.today() - timedelta(days=1)
@@ -57,7 +59,8 @@ def create_url(search, max_results=100) -> tuple:
     """Create full URL for Twitter API request."""
     if max_results < 10:
         max_results = 10
-    search_url = "https://api.twitter.com/2/tweets/search/recent?"
+    # search_url = "https://api.twitter.com/2/tweets/search/recent?"
+    search_url = API_URL
     yesterday = get_yesterday_date()
     current_time = get_current_time()
     query_params = {'query': search,

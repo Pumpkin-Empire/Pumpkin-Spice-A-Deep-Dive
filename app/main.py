@@ -10,7 +10,7 @@ import seaborn as sns
 import psycopg2
 from textblob import TextBlob
 from utils import get_most_hashtags, get_most_mentions, show_wordcloud
-# import time
+import time
 
 # Gives time for API request & database write to finish before trying to connect.
 # time.sleep(10)
