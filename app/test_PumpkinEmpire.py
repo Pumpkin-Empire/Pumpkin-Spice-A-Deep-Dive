@@ -1,7 +1,13 @@
+# import PumpkinEmpire
 from PumpkinEmpire import *
+import PumpkinEmpire
 import unittest
-# import mock
+from unittest.mock import MagicMock
+from mock import patch
 from datetime import datetime, date
+from freezegun import freeze_time
+from io import TextIOWrapper, BytesIO
+import config_test, config_test_empty
 
 
 class TestPumpkinEmpire(unittest.TestCase):
@@ -10,6 +16,23 @@ class TestPumpkinEmpire(unittest.TestCase):
         test_time = datetime(2022, 8, 22, 23, 55, 59)
         expected = "2022-08-22T23:55:59Z"
         self.assertEqual(get_date_string(test_date, test_time), expected)
+
+    @freeze_time("2022-08-22 14:03:11")
+    def test_get_current_date_and_time(self):
+        expected = "2022-08-22 14:03:11"
+        actual = get_current_date_and_time()
+        self.assertEqual(expected, actual)
+
+    def test_auth(self):
+        expected = "asbn3920hasn358a"
+        with patch('PumpkinEmpire.config', new=config_test):
+            actual = auth()
+        self.assertEqual(expected, actual)
+
+    def test_auth_no_file(self):
+        with patch('PumpkinEmpire.config', new=config_test_empty):
+            with self.assertRaises(AttributeError):
+                auth()
 
 
 if __name__ == '__main__':

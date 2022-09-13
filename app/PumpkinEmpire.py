@@ -8,6 +8,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import *
 import config
+import config_test_empty
 
 hostname = 'database'
 port = '5432'
@@ -32,15 +33,20 @@ def get_date_string(yesterday, current_time) -> str:
     return str(yesterday) + time_and_formatting
 
 
-def print_current_date_and_time():
-    """"Prints the current date & time"""
+def get_current_date_and_time():
+    """Prints the current date & time.
+    Used for logging to console."""
     now = datetime.now()
-    print(now.strftime("%Y-%m-%d %H:%M:%S"))
+    return now.strftime("%Y-%m-%d %H:%M:%S")
 
 
-def auth():
+def auth() -> str:
     """Get bearer token from config.py"""
-    return config.bearer_token
+    try:
+        return config.bearer_token
+    except AttributeError:
+        print("Please create & set-up config.py per README.")
+        raise AttributeError
 
 
 def create_headers(bearer_token) -> dict:
@@ -163,7 +169,7 @@ def loop_connect(search, next_token) -> tuple:
 def streamlit_connect(search, next_token=None):
     """Continuously makes API requests on a fifteen-minute timer.
     Closes when the Docker container is stopped."""
-    print_current_date_and_time()
+    print(get_current_date_and_time())
 
     # next_token = None
 
