@@ -143,6 +143,12 @@ To close the pipeline, open Docker Dashboard and click on the Containers tab. Fr
 
 ![Docker stop](/static/dockerstop.png)
 
+## About the Database
+
+For this project, two tables are used. One stores tweets, and the other stores user information. The table are automatically created in Postgres during Docker composition. Below is the data model.
+
+![Data Model](/static/datamodel.png)
+
 
 
 ## Learning Resources
