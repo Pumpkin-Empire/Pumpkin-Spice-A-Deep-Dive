@@ -109,7 +109,7 @@ def loop_connect(search, next_token) -> tuple:
     Returns: All responses appended to a single dict."""
     # May be able to make these global, depending on the automation used later.
     max_requests_per_call = 100
-    max_requests_per_window = 180
+    max_requests_per_window = 500
 
     # Create URL for response
     bearer_token = config.bearer_token
@@ -122,8 +122,8 @@ def loop_connect(search, next_token) -> tuple:
 
     # Update how many items we can request
     requests_per_call = max_requests_per_window - max_requests_per_call
-    while requests_per_call > 0:
-        url = create_url(search, requests_per_call)
+    while requests_per_call >= max_requests_per_call:
+        url = create_url(search, max_requests_per_call)
         try:
             next_token = json_response['meta']['next_token']
         except KeyError:
